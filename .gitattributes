@@ -1,0 +1,16 @@
+# Force GitHub to recognize this as a Python project
+* linguist-language=Python
+
+# Mark static assets as vendored (don't count for language stats)
+static/* linguist-vendored
+*/static/* linguist-vendored
+
+# Mark common frontend dependencies as vendored
+*.css linguist-vendored
+*.scss linguist-vendored
+*.js linguist-vendored=false
+*.html linguist-vendored=false
+
+# Documentation
+*.md linguist-documentation
+docs/* linguist-documentation

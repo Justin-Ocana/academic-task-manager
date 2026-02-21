@@ -257,7 +257,8 @@ Backend Developer enfocado en arquitectura limpia y sistemas escalables.
 Estudiante de último año de bachillerato | Aspirante a Ingeniería en Ciencias de la Computación
 
 📧 justin.ocana.molina@gmail.com  
-🔗 [GitHub](https://github.com/Justin-Ocana)
+🔗 [GitHub](https://github.com/Justin-Ocana)  
+🌐 [Portafolio Digital](https://justin-ocana.github.io/)
 
 ---
 
