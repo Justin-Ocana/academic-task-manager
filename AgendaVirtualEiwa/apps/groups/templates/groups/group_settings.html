@@ -1,0 +1,365 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Configuración - {{ group.name }} - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/groups.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Configuración del Grupo</h1>
+    <p>{{ group.name }}</p>
+</div>
+
+<div class="form-container">
+    <form method="post" class="group-form">
+        {% csrf_token %}
+
+        <!-- Información Básica -->
+        <div class="form-section">
+            <h2>Información Básica</h2>
+
+            <div class="form-group">
+                <label class="form-label">Nombre del Grupo</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <span class="form-error">{{ form.name.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Descripción</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                <span class="form-error">{{ form.description.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Máximo de Estudiantes</label>
+                {{ form.max_members }}
+                <small class="form-help">Número máximo de miembros permitidos en el grupo</small>
+                {% if form.max_members.errors %}
+                <span class="form-error">{{ form.max_members.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Configuración de Ingreso -->
+        <div class="form-section">
+            <h2>Configuración de Ingreso</h2>
+
+            <div class="form-group">
+                <label class="form-label">Tipo de Ingreso</label>
+                {{ form.entry_type }}
+                <small class="form-help">
+                    <strong>Ingreso Libre:</strong> Cualquiera con el código puede unirse automáticamente<br>
+                    <strong>Con Aprobación:</strong> Las solicitudes deben ser aprobadas por el líder
+                </small>
+                {% if form.entry_type.errors %}
+                <span class="form-error">{{ form.entry_type.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Código de Invitación Activo</label>
+                <div class="checkbox-wrapper">
+                    {{ form.is_invite_active }}
+                    <span>Permitir que nuevos miembros se unan con el código</span>
+                </div>
+                {% if form.is_invite_active.errors %}
+                <span class="form-error">{{ form.is_invite_active.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="invite-code-section">
+                <label class="form-label">Código de Invitación Actual</label>
+                <div class="invite-code-display">
+                    <code>{{ group.invite_code }}</code>
+                    <a href="{% url 'regenerate_invite_code' group.id %}" class="btn btn-secondary btn-sm"
+                        onclick="return confirm('¿Regenerar código? El código anterior dejará de funcionar.')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                        </svg>
+                        Regenerar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permisos de Tareas -->
+        <div class="form-section">
+            <h2>Permisos de Tareas</h2>
+
+            <div class="form-group">
+                <label class="form-label">Crear Tareas</label>
+                {{ form.task_create_permission }}
+                {% if form.task_create_permission.errors %}
+                <span class="form-error">{{ form.task_create_permission.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Editar Tareas</label>
+                {{ form.task_edit_permission }}
+                {% if form.task_edit_permission.errors %}
+                <span class="form-error">{{ form.task_edit_permission.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Eliminar Tareas</label>
+                {{ form.task_delete_permission }}
+                {% if form.task_delete_permission.errors %}
+                <span class="form-error">{{ form.task_delete_permission.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Revertir Cambios</label>
+                {{ form.task_revert_permission }}
+                {% if form.task_revert_permission.errors %}
+                <span class="form-error">{{ form.task_revert_permission.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Permisos de Materias -->
+        <div class="form-section">
+            <h2>Permisos de Materias</h2>
+
+            <div class="form-group">
+                <label class="form-label">Gestión de Materias</label>
+                {{ form.subject_permission }}
+                {% if form.subject_permission.errors %}
+                <span class="form-error">{{ form.subject_permission.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Moderación de Contenido -->
+        <div class="form-section">
+            <h2>Moderación de Contenido</h2>
+
+            <div class="form-group">
+                <label class="form-label">Filtro de Lenguaje Inapropiado</label>
+                {{ form.content_moderation }}
+
+                <small class="form-help">
+                    <strong>Opciones disponibles:</strong><br><br>
+
+                    <strong>Desactivada:</strong> No se aplica ningún filtro. Los usuarios pueden escribir
+                    libremente.<br><br>
+
+                    <strong>Censurar palabras (###):</strong> Las palabras inapropiadas se reemplazan automáticamente
+                    con símbolos ###. La tarea se guarda con el contenido censurado. <span
+                        style="color: var(--azul-secundario); font-weight: 600;">(Recomendado)</span><br><br>
+
+                    <strong>Bloquear contenido:</strong> No permite guardar tareas que contengan lenguaje inapropiado.
+                    Muestra un mensaje de error al usuario.<br><br>
+
+                    <strong>Sistema de detección inteligente:</strong> El filtro detecta automáticamente palabras
+                    inapropiadas y sus variaciones, incluyendo sustitución de letras por números, espacios entre letras,
+                    caracteres separadores, letras repetidas y acentos.
+                </small>
+
+                {% if form.content_moderation.errors %}
+                <span class="form-error">{{ form.content_moderation.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Documentos Adjuntos -->
+        <div class="form-section">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
+                    <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                </svg>
+                Documentos Adjuntos
+            </h2>
+
+            <div class="form-group">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #f8f9fa; border-radius: 10px; border: 2px solid #e9ecef; cursor: pointer; transition: all 0.3s ease;">
+                    {{ form.documents_enabled }}
+                    <label for="id_documents_enabled" style="cursor: pointer; font-weight: 600; color: var(--azul-principal); margin: 0; flex: 1;">
+                        {{ form.documents_enabled.label }}
+                    </label>
+                </div>
+                <small class="form-help">Permite que los miembros suban archivos PDF, Word, Excel, PowerPoint y TXT a las tareas (máx. 10 MB por archivo)</small>
+                {% if form.documents_enabled.errors %}
+                <span class="form-error">{{ form.documents_enabled.errors.0 }}</span>
+                {% endif %}
+            </div>
+            
+            <!-- Advertencia experimental -->
+            <div id="experimentalWarning" class="experimental-warning" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <div>
+                    <strong>Función Experimental</strong>
+                    <p>La subida de documentos está en fase de prueba. Puede presentar pequeños errores. Estamos trabajando para mejorarla continuamente.</p>
+                </div>
+            </div>
+
+            <div class="form-group" id="documentPermissionGroup">
+                <label class="form-label">{{ form.document_upload_permission.label }}</label>
+                {{ form.document_upload_permission }}
+                <small class="form-help">
+                    <strong>Todos pueden subir:</strong> Cualquier miembro puede adjuntar documentos a las tareas<br>
+                    <strong>Solo líder:</strong> Solo tú puedes subir documentos<br>
+                    <strong>Con aprobación:</strong> Los miembros pueden subir documentos, pero requieren tu aprobación antes de ser visibles
+                </small>
+                {% if form.document_upload_permission.errors %}
+                <span class="form-error">{{ form.document_upload_permission.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <style>
+            #id_documents_enabled {
+                width: 24px;
+                height: 24px;
+                cursor: pointer;
+                appearance: none;
+                -webkit-appearance: none;
+                background: white;
+                border: 2px solid #cbd5e0;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+            #id_documents_enabled:checked {
+                background: linear-gradient(135deg, var(--azul-pastel), var(--azul-principal));
+                border-color: var(--azul-principal);
+            }
+            #id_documents_enabled:checked::after {
+                content: '';
+                position: absolute;
+                left: 7px;
+                top: 3px;
+                width: 6px;
+                height: 11px;
+                border: solid white;
+                border-width: 0 2.5px 2.5px 0;
+                transform: rotate(45deg);
+            }
+            
+            /* Advertencia experimental */
+            .experimental-warning {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+                background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+                border: 2px solid #ffc107;
+                border-left: 4px solid #ff9800;
+                border-radius: 12px;
+                margin-top: 12px;
+                animation: slideDown 0.3s ease;
+            }
+            
+            .experimental-warning svg {
+                width: 24px;
+                height: 24px;
+                color: #f57c00;
+                flex-shrink: 0;
+                margin-top: 2px;
+            }
+            
+            .experimental-warning strong {
+                display: block;
+                color: #e65100;
+                font-size: 0.95rem;
+                margin-bottom: 4px;
+            }
+            
+            .experimental-warning p {
+                margin: 0;
+                color: #ef6c00;
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            /* Modo oscuro */
+            body[data-theme="dark"] #id_documents_enabled {
+                background: var(--dark-bg-card, #1e2533);
+                border-color: var(--dark-border, #2d3748);
+            }
+            body[data-theme="dark"] #id_documents_enabled:checked {
+                background: linear-gradient(135deg, var(--dark-azul-pastel, #6bb3ff), var(--azul-principal));
+                border-color: var(--dark-azul-pastel, #6bb3ff);
+            }
+            body[data-theme="dark"] .form-group > div {
+                background: var(--dark-bg-secondary, #1a1f2e) !important;
+                border-color: var(--dark-border, #2d3748) !important;
+            }
+            body[data-theme="dark"] .form-group > div label {
+                color: var(--dark-text-primary, #e8eaed) !important;
+            }
+            body[data-theme="dark"] .experimental-warning {
+                background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 152, 0, 0.08) 100%);
+                border-color: rgba(255, 183, 77, 0.3);
+                border-left-color: #ffa726;
+            }
+            body[data-theme="dark"] .experimental-warning svg {
+                color: #ffb74d;
+            }
+            body[data-theme="dark"] .experimental-warning strong {
+                color: #ffcc80;
+            }
+            body[data-theme="dark"] .experimental-warning p {
+                color: #ffe0b2;
+            }
+        </style>
+
+        <!-- Acciones -->
+        <div class="form-actions">
+            <a href="{% url 'group_detail' group.id %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Mostrar/ocultar permisos de documentos según checkbox
+    document.addEventListener('DOMContentLoaded', function() {
+        const documentsCheckbox = document.getElementById('id_documents_enabled');
+        const permissionGroup = document.getElementById('documentPermissionGroup');
+        const experimentalWarning = document.getElementById('experimentalWarning');
+        
+        if (documentsCheckbox && permissionGroup) {
+            function toggleDocumentPermissions() {
+                if (documentsCheckbox.checked) {
+                    permissionGroup.style.display = 'block';
+                    if (experimentalWarning) {
+                        experimentalWarning.style.display = 'flex';
+                    }
+                } else {
+                    permissionGroup.style.display = 'none';
+                    if (experimentalWarning) {
+                        experimentalWarning.style.display = 'none';
+                    }
+                }
+            }
+            
+            documentsCheckbox.addEventListener('change', toggleDocumentPermissions);
+            toggleDocumentPermissions(); // Ejecutar al cargar
+        }
+    });
+</script>
+{% endblock %}

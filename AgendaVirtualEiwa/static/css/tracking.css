@@ -1,0 +1,806 @@
+/* Tracking & History Styles */
+
+.history-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.history-header {
+    margin-bottom: 30px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--azul-secundario);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+}
+
+.back-link:hover {
+    color: var(--azul-principal);
+    transform: translateX(-3px);
+}
+
+.back-link svg {
+    width: 20px;
+    height: 20px;
+}
+
+.history-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--azul-principal);
+    margin: 0 0 8px;
+    letter-spacing: 1px;
+}
+
+.history-header p {
+    color: #718096;
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+/* Revertible Actions */
+.revertible-section {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid var(--naranja-eiwa);
+}
+
+.revertible-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--azul-principal);
+    margin: 0 0 20px;
+}
+
+.revertible-section h2 svg {
+    width: 24px;
+    height: 24px;
+    color: var(--naranja-eiwa);
+}
+
+.revertible-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.revertible-card {
+    background: #fff8f0;
+    border: 2px solid var(--naranja-pastel);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.revertible-info h4 {
+    margin: 0 0 5px;
+    color: var(--azul-principal);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.revertible-info p {
+    margin: 0 0 5px;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.revertible-time {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.revert-form {
+    margin: 0;
+}
+
+.btn-revert {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--naranja-pastel), var(--naranja-eiwa));
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(246, 173, 25, 0.3);
+}
+
+.btn-revert:hover {
+    background: linear-gradient(135deg, var(--naranja-eiwa), #d68910);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(246, 173, 25, 0.4);
+}
+
+.btn-revert svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-revert-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, var(--naranja-pastel), var(--naranja-eiwa));
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(246, 173, 25, 0.3);
+}
+
+.btn-revert-small:hover {
+    background: linear-gradient(135deg, var(--naranja-eiwa), #d68910);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(246, 173, 25, 0.4);
+}
+
+.btn-revert-small svg {
+    width: 14px;
+    height: 14px;
+}
+
+.change-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Timeline Section */
+.timeline-section {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.timeline-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--azul-principal);
+    margin: 0 0 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f7fafc;
+}
+
+.timeline-section h2 svg {
+    width: 24px;
+    height: 24px;
+    color: var(--azul-secundario);
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding-left: 40px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--azul-pastel), #e2e8f0);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -29px;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--azul-secundario);
+    z-index: 1;
+}
+
+.timeline-task .timeline-marker {
+    border-color: var(--azul-secundario);
+}
+
+.timeline-group .timeline-marker {
+    border-color: var(--naranja-eiwa);
+}
+
+.timeline-content {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.3s;
+}
+
+.timeline-item:hover .timeline-content {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.timeline-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.timeline-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.timeline-icon svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+.icon-task {
+    background: linear-gradient(135deg, var(--azul-pastel), var(--azul-secundario));
+}
+
+.icon-group {
+    background: linear-gradient(135deg, var(--naranja-pastel), var(--naranja-eiwa));
+}
+
+.timeline-info {
+    flex: 1;
+}
+
+.timeline-info h4 {
+    margin: 0 0 4px;
+    color: var(--azul-principal);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.timeline-time {
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+.timeline-body {
+    padding-left: 52px;
+}
+
+.timeline-user {
+    margin: 0 0 8px;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.timeline-user strong {
+    color: var(--azul-principal);
+}
+
+.timeline-user a {
+    color: var(--azul-secundario);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.timeline-user a:hover {
+    text-decoration: underline;
+}
+
+.timeline-description {
+    margin: 0;
+    color: #718096;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Changes Display */
+.timeline-changes {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+}
+
+.change-field {
+    display: block;
+    font-weight: 600;
+    color: var(--azul-principal);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.change-comparison {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.change-box {
+    flex: 1;
+    min-width: 150px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.change-old-box {
+    background: #fee;
+    border: 1px solid #fcc;
+}
+
+.change-new-box {
+    background: #efe;
+    border: 1px solid #cfc;
+}
+
+.change-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.change-old-box .change-label {
+    color: #c53030;
+}
+
+.change-new-box .change-label {
+    color: #2f855a;
+}
+
+.change-value {
+    display: block;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.change-arrow {
+    width: 20px;
+    height: 20px;
+    color: #718096;
+    flex-shrink: 0;
+}
+
+.change-old {
+    color: #c53030;
+    text-decoration: line-through;
+    font-size: 0.9rem;
+}
+
+.change-new {
+    color: #2f855a;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Task Info Card */
+.task-info-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    margin-bottom: 30px;
+}
+
+.task-info-header {
+    padding: 20px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-info-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.task-status {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.task-info-body {
+    padding: 20px;
+}
+
+.task-info-body p {
+    margin: 0 0 10px;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.task-info-body p:last-child {
+    margin-bottom: 0;
+}
+
+.task-info-body strong {
+    color: var(--azul-principal);
+}
+
+/* Empty State */
+.empty-history {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-history svg {
+    width: 80px;
+    height: 80px;
+    color: var(--azul-pastel);
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.empty-history p {
+    margin: 0;
+    color: #718096;
+    font-size: 1.1rem;
+}
+
+/* Revert Confirmation Page */
+.revert-confirm-section {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.revert-warning {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    background: #fff8f0;
+    border: 2px solid var(--naranja-pastel);
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.revert-warning svg {
+    width: 40px;
+    height: 40px;
+    color: var(--naranja-eiwa);
+    flex-shrink: 0;
+}
+
+.revert-warning h3 {
+    margin: 0 0 8px;
+    color: var(--azul-principal);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.revert-warning p {
+    margin: 0;
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+.revert-details {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.revert-details h3 {
+    margin: 0 0 20px;
+    color: var(--azul-principal);
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.detail-value {
+    color: var(--azul-principal);
+}
+
+.revert-changes {
+    margin-bottom: 30px;
+}
+
+.revert-changes h3 {
+    margin: 0 0 8px;
+    color: var(--azul-principal);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.changes-subtitle {
+    margin: 0 0 20px;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.changes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.change-item {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.change-field-name {
+    display: block;
+    font-weight: 600;
+    color: var(--azul-principal);
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+}
+
+.change-current-box {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+}
+
+.change-revert-box {
+    background: #d1ecf1;
+    border: 2px solid #17a2b8;
+}
+
+.restore-info {
+    background: #d1ecf1;
+    border: 2px solid #17a2b8;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.restore-info p {
+    margin: 0 0 10px;
+    color: #4a5568;
+}
+
+.restore-info p:last-child {
+    margin-bottom: 0;
+}
+
+.restore-info strong {
+    color: var(--azul-principal);
+}
+
+.revert-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding-top: 20px;
+    border-top: 2px solid #f7fafc;
+}
+
+.btn-confirm-revert {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 30px;
+    background: linear-gradient(135deg, var(--naranja-pastel), var(--naranja-eiwa));
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(246, 173, 25, 0.3);
+}
+
+.btn-confirm-revert:hover {
+    background: linear-gradient(135deg, var(--naranja-eiwa), #d68910);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(246, 173, 25, 0.4);
+}
+
+.btn-confirm-revert svg {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-cancel-revert {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 30px;
+    background: #e2e8f0;
+    color: #4a5568;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel-revert:hover {
+    background: #cbd5e0;
+    color: var(--azul-principal);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .history-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .revertible-section,
+    .timeline-section {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+
+    .revertible-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-revert {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .timeline {
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        left: 10px;
+    }
+
+    .timeline-marker {
+        left: -24px;
+        width: 10px;
+        height: 10px;
+    }
+
+    .timeline-content {
+        padding: 14px;
+    }
+
+    .timeline-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .timeline-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .timeline-body {
+        padding-left: 0;
+        margin-top: 10px;
+    }
+
+    .change-comparison {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .change-box {
+        width: 100%;
+    }
+
+    .change-arrow {
+        transform: rotate(90deg);
+    }
+
+    .task-info-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+.revert-confirm-section {
+    padding: 20px 16px;
+}
+
+.revert-warning {
+    flex-direction: column;
+    text-align: center;
+}
+
+.revert-warning svg {
+    margin: 0 auto;
+}
+
+.detail-row {
+    flex-direction: column;
+    gap: 5px;
+}
+
+.revert-actions {
+    flex-direction: column;
+}
+
+.btn-confirm-revert,
+.btn-cancel-revert {
+    width: 100%;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .history-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .revertible-section h2,
+    .timeline-section h2 {
+        font-size: 1.3rem;
+    }
+
+    .timeline-info h4 {
+        font-size: 0.95rem;
+    }
+
+    .timeline-time {
+        font-size: 0.75rem;
+    }
+
+    .revert-warning h3 {
+        font-size: 1rem;
+    }
+
+    .revert-details h3,
+    .revert-changes h3 {
+        font-size: 1rem;
+    }
+}

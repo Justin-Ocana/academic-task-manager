@@ -1,0 +1,62 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Agregar Materia - {{ group.name }} - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/subjects.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="page-header">
+        <h1>{% if needs_approval %}Solicitar{% else %}Agregar{% endif %} Materia</h1>
+        <p>{{ group.name }}</p>
+    </div>
+
+    <form method="post" class="subject-form">
+        {% csrf_token %}
+
+        {% if needs_approval %}
+        <div class="alert alert-info">
+            Tu solicitud será revisada por el líder del grupo antes de ser agregada.
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label class="form-label">Nombre de la Materia:</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+            <span class="form-error">{{ form.name.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group color-group">
+            <label class="form-label">Color:</label>
+            <div class="color-selector">
+                {% for value, label in form.color.field.choices %}
+                <label class="color-option">
+                    <input type="radio" name="color" value="{{ value }}" {% if form.color.value == value %}checked{% endif %}>
+                    <span class="color-preview" style="background: {{ value }};" title="{{ label }}">
+                        <span class="color-check">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                    </span>
+                </label>
+                {% endfor %}
+            </div>
+            {% if form.color.errors %}
+            <span class="form-error">{{ form.color.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'group_subjects' group.id %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">{% if needs_approval %}Enviar Solicitud{% else %}Agregar
+                Materia{% endif %}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

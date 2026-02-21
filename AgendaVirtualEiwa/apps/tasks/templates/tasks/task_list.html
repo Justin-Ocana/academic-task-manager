@@ -1,0 +1,55 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Tareas - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Mis Tareas</h1>
+    <p>Selecciona un grupo para ver sus tareas</p>
+</div>
+
+{% if groups %}
+<div class="groups-grid">
+    {% for group in groups %}
+    <a href="{% url 'group_tasks' group.id %}" class="group-card">
+        <div class="group-header">
+            <div class="group-icon">{{ group.name|first|upper }}</div>
+            <div class="group-info">
+                <h3>{{ group.name }}</h3>
+                <p>{{ group.members.count }} miembro{{ group.members.count|pluralize }}</p>
+            </div>
+        </div>
+        <div class="task-stats">
+            <div class="stat-item pending">
+                <span class="stat-value">{{ group.pending_tasks }}</span>
+                <span class="stat-label">Pendiente{{ group.pending_tasks|pluralize }}</span>
+            </div>
+            <div class="stat-item completed">
+                <span class="stat-value">{{ group.completed_tasks }}</span>
+                <span class="stat-label">Completada{{ group.completed_tasks|pluralize }}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ group.total_tasks }}</span>
+                <span class="stat-label">Total</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+        </path>
+    </svg>
+    <h2>No tienes grupos</h2>
+    <p>Únete o crea un grupo para empezar a gestionar tareas</p>
+</div>
+{% endif %}
+{% endblock %}

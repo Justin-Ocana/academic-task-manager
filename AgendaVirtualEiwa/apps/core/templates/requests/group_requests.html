@@ -1,0 +1,579 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block title %}Solicitudes - {{ group.name }} - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/requests.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <div class="history-header">
+        <div>
+            <a href="{% url 'requests_list' %}" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Volver a solicitudes
+            </a>
+            <h1>Solicitudes - {{ group.name }}</h1>
+            <p>{{ total_requests }} solicitud{{ total_requests|pluralize:"es" }} pendiente{{ total_requests|pluralize }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Selector desplegable para filtrar por tipo -->
+    <div class="filter-dropdown-wrapper">
+        <button class="filter-dropdown-trigger" id="filterDropdown">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 4h18M3 12h18M3 20h18"></path>
+            </svg>
+            <span class="filter-current">
+                {% if request_type == 'all' %}Todas ({{ total_requests }})
+                {% elif request_type == 'join' %}Ingreso ({{ join_requests.count }})
+                {% elif request_type == 'tasks' %}Tareas ({{ task_requests.count }})
+                {% elif request_type == 'edits' %}Ediciones ({{ edit_requests.count }})
+                {% elif request_type == 'subjects' %}Materias ({{ subject_requests.count }})
+                {% endif %}
+            </span>
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
+        <div class="filter-dropdown-menu" id="filterMenu">
+            <a href="?type=all" class="filter-option {% if request_type == 'all' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                    </path>
+                </svg>
+                <span>Todas</span>
+                <span class="filter-count">{{ total_requests }}</span>
+            </a>
+            <a href="?type=join" class="filter-option {% if request_type == 'join' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
+                    </path>
+                </svg>
+                <span>Ingreso</span>
+                <span class="filter-count">{{ join_requests.count }}</span>
+            </a>
+            <a href="?type=tasks" class="filter-option {% if request_type == 'tasks' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                    </path>
+                </svg>
+                <span>Tareas</span>
+                <span class="filter-count">{{ task_requests.count }}</span>
+            </a>
+            <a href="?type=edits" class="filter-option {% if request_type == 'edits' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                    </path>
+                </svg>
+                <span>Ediciones</span>
+                <span class="filter-count">{{ edit_requests.count }}</span>
+            </a>
+            <a href="?type=subjects" class="filter-option {% if request_type == 'subjects' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>Materias</span>
+                <span class="filter-count">{{ subject_requests.count }}</span>
+            </a>
+        </div>
+    </div>
+
+    {% if total_requests == 0 %}
+    <div class="empty-history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p>No hay solicitudes pendientes</p>
+    </div>
+    {% else %}
+
+    <!-- Solicitudes de Ingreso -->
+    {% if request_type == 'all' or request_type == 'join' %}
+    {% if join_requests %}
+    <div class="timeline-section" style="margin-bottom: 30px;">
+        <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            Solicitudes de Ingreso
+        </h2>
+        <div class="requests-section">
+            {% for req in join_requests %}
+            <div class="request-card animate-card" style="animation-delay: {{ forloop.counter|add:0|floatformat:1 }}s;">
+                <div class="request-header">
+                    <div class="request-subject" style="background: var(--azul-secundario);">
+                        Ingreso al Grupo
+                    </div>
+                    <span class="request-date">{{ req.created_at|timesince }} atrás</span>
+                </div>
+                <div class="request-body">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        {% render_avatar_inline req.user '40px' %}
+                        <p class="request-author" style="margin: 0;">
+                            <strong>{{ req.user.nombre }} {{ req.user.apellido }}</strong> ({{ req.user.email }})
+                        </p>
+                    </div>
+                    {% if req.message %}
+                    <p class="request-description">{{ req.message }}</p>
+                    {% endif %}
+                </div>
+                {% if is_leader %}
+                <div class="request-actions">
+                    <form method="post" action="{% url 'approve_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-approve">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Aprobar
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'reject_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-reject" onclick="return confirm('¿Rechazar esta solicitud?')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Rechazar
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Solicitudes de Tareas -->
+    {% if request_type == 'all' or request_type == 'tasks' %}
+    {% if task_requests %}
+    <div class="timeline-section" style="margin-bottom: 30px;">
+        <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                </path>
+            </svg>
+            Solicitudes de Tareas
+        </h2>
+        <div class="requests-section">
+            {% for req in task_requests %}
+            <div class="request-card animate-card" style="animation-delay: {{ forloop.counter|add:0|floatformat:1 }}s;">
+                <div class="request-header">
+                    <div class="request-subject" style="background: {{ req.subject.color }};">
+                        {{ req.subject.name }}
+                    </div>
+                    <span class="request-date">{{ req.created_at|timesince }} atrás</span>
+                </div>
+                <div class="request-body">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        {% render_avatar_inline req.requested_by '40px' %}
+                        <p class="request-author" style="margin: 0;">
+                            <strong>{{ req.requested_by.nombre }} {{ req.requested_by.apellido }}</strong> solicita crear
+                            esta tarea
+                        </p>
+                    </div>
+                    <p class="request-description">{{ req.description|truncatewords:30 }}</p>
+                    <div class="request-meta">
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                style="width: 16px; height: 16px; vertical-align: middle;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            Entrega: {{ req.due_date|date:"d/m/Y" }}
+                        </span>
+                    </div>
+                    {% if req.temp_attachments.exists %}
+                    <div class="request-attachments">
+                        <div class="attachments-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                                <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                            <span>{{ req.temp_attachments.count }} documento{{ req.temp_attachments.count|pluralize }} adjunto{{ req.temp_attachments.count|pluralize }}</span>
+                        </div>
+                        <div class="attachments-grid">
+                            {% for att in req.temp_attachments.all %}
+                            <div class="attachment-card-small">
+                                <div class="attachment-icon-wrapper">
+                                    {% if '.pdf' in att.original_filename|lower %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                    {% elif '.doc' in att.original_filename|lower %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    {% else %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    {% endif %}
+                                </div>
+                                <div class="attachment-details">
+                                    <div class="attachment-name-truncate" title="{{ att.original_filename }}">{{ att.original_filename }}</div>
+                                    <div class="attachment-meta-small">{{ att.file_size|filesizeformat }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if is_leader %}
+                <div class="request-actions">
+                    <form method="post" action="{% url 'approve_task_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-approve">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Aprobar
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'reject_task_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-reject" onclick="return confirm('¿Rechazar esta solicitud?')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Rechazar
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="request-status">
+                    <span class="status-badge status-pending">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Pendiente
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Solicitudes de Ediciones -->
+    {% if request_type == 'all' or request_type == 'edits' %}
+    {% if edit_requests %}
+    <div class="timeline-section" style="margin-bottom: 30px;">
+        <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                </path>
+            </svg>
+            Solicitudes de Ediciones
+        </h2>
+        <div class="requests-section">
+            {% for req in edit_requests %}
+            <div class="request-card animate-card" style="animation-delay: {{ forloop.counter|add:0|floatformat:1 }}s;">
+                <div class="request-header">
+                    <div class="request-subject" style="background: {{ req.task.subject.color }};">
+                        {{ req.task.subject.name }}
+                    </div>
+                    <span class="request-date">{{ req.created_at|timesince }} atrás</span>
+                </div>
+                <div class="request-body">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        {% render_avatar_inline req.requested_by '40px' %}
+                        <p class="request-author" style="margin: 0;">
+                            <strong>{{ req.requested_by.nombre }} {{ req.requested_by.apellido }}</strong> solicita editar
+                            esta tarea
+                        </p>
+                    </div>
+                    {% if req.message %}
+                    <p class="request-description">{{ req.message }}</p>
+                    {% endif %}
+
+                    <!-- Debug: {{ req.proposed_changes }} -->
+
+                    <div class="request-changes">
+                        <div class="changes-header">Cambios propuestos</div>
+                        {% if req.proposed_changes %}
+                        {% for field, new_value in req.proposed_changes.items %}
+                        {% if field != 'subject_name' %}
+                        <div class="change-row">
+                            <div class="change-field">
+                                {% if field == 'description' %}Descripción
+                                {% elif field == 'subject_id' %}Materia
+                                {% elif field == 'due_date' %}Fecha de entrega
+                                {% elif field == 'assigned_date' %}Fecha mandada
+                                {% else %}{{ field }}
+                                {% endif %}
+                            </div>
+                            <div class="change-content">
+                                <div class="change-from">
+                                    {% if field == 'description' %}{{ req.task.description|default:"Sin descripción" }}
+                                    {% elif field == 'subject_id' %}{{ req.task.subject.name }}
+                                    {% elif field == 'due_date' %}{{ req.task.due_date|date:"d/m/Y" }}
+                                    {% elif field == 'assigned_date' %}{{ req.task.assigned_date|date:"d/m/Y" }}
+                                    {% endif %}
+                                </div>
+                                <div class="change-arrow">→</div>
+                                <div class="change-to">
+                                    {% if field == 'subject_id' and req.proposed_changes.subject_name %}
+                                    {{ req.proposed_changes.subject_name }}
+                                    {% else %}
+                                    {{ new_value }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <!-- Mostrar información actual de la tarea -->
+                        <div class="current-task-info-only">
+                            <div class="task-info-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                                <span>Información de la tarea</span>
+                            </div>
+                            <div class="task-info-grid">
+                                <div class="task-info-card">
+                                    <div class="info-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-title">Materia</div>
+                                        <div class="info-value">{{ req.task.subject.name }}</div>
+                                    </div>
+                                </div>
+                                <div class="task-info-card">
+                                    <div class="info-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="info-content">
+                                        <div class="info-title">Fecha de entrega</div>
+                                        <div class="info-value">{{ req.task.due_date|date:"d/m/Y" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-description-card">
+                                <div class="description-header">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 6h16M4 12h16M4 18h7"></path>
+                                    </svg>
+                                    <span>Descripción</span>
+                                </div>
+                                <div class="description-content">{{ req.task.description|default:"Sin descripción" }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Cambios en documentos -->
+                    {% if req.documents_to_delete or req.new_attachments.exists %}
+                    <div class="request-documents-changes">
+                        <div class="changes-header">Cambios en documentos</div>
+                        
+                        {% if req.documents_to_delete %}
+                        <div class="documents-to-delete">
+                            <div class="doc-change-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                    <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <span>Documentos a eliminar:</span>
+                            </div>
+                            {% for att_id in req.documents_to_delete %}
+                                {% for att in req.task.attachments.all %}
+                                    {% if att.id == att_id %}
+                                    <div class="doc-change-item delete">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>{{ att.original_filename }}</span>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if req.new_attachments.exists %}
+                        <div class="documents-to-add">
+                            <div class="doc-change-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                                    <path d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                <span>Documentos a agregar:</span>
+                            </div>
+                            {% for att in req.new_attachments.all %}
+                            <div class="doc-change-item add">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>{{ att.original_filename }} ({{ att.file_size|filesizeformat }})</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% if is_leader or req.task.created_by == request.user %}
+                <div class="request-actions">
+                    <form method="post" action="{% url 'approve_edit_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-approve">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Aprobar
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'reject_edit_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-reject" onclick="return confirm('¿Rechazar esta solicitud?')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Rechazar
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="request-status">
+                    <span class="status-badge status-pending">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Pendiente
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Solicitudes de Materias -->
+    {% if request_type == 'all' or request_type == 'subjects' %}
+    {% if subject_requests %}
+    <div class="timeline-section" style="margin-bottom: 30px;">
+        <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Solicitudes de Materias
+        </h2>
+        <div class="requests-section">
+            {% for req in subject_requests %}
+            <div class="request-card animate-card" style="animation-delay: {{ forloop.counter|add:0|floatformat:1 }}s;">
+                <div class="request-header">
+                    <div class="request-subject" style="background: {{ req.color }};">
+                        {{ req.name }}
+                    </div>
+                    <span class="request-date">{{ req.created_at|timesince }} atrás</span>
+                </div>
+                <div class="request-body">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        {% render_avatar_inline req.requested_by '40px' %}
+                        <p class="request-author" style="margin: 0;">
+                            <strong>{{ req.requested_by.nombre }} {{ req.requested_by.apellido }}</strong> solicita agregar
+                            esta materia
+                        </p>
+                    </div>
+                </div>
+                {% if is_leader %}
+                <div class="request-actions">
+                    <form method="post" action="{% url 'approve_subject_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-approve">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Aprobar
+                        </button>
+                    </form>
+                    <form method="post" action="{% url 'reject_subject_request' req.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-reject" onclick="return confirm('¿Rechazar esta solicitud?')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Rechazar
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="request-status">
+                    <span class="status-badge status-pending">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Pendiente
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdown = document.getElementById('filterDropdown');
+        const menu = document.getElementById('filterMenu');
+
+        if (dropdown && menu) {
+            dropdown.addEventListener('click', function (e) {
+                e.stopPropagation();
+                menu.classList.toggle('active');
+                dropdown.classList.toggle('active');
+            });
+
+            // Cerrar al hacer clic fuera
+            document.addEventListener('click', function () {
+                menu.classList.remove('active');
+                dropdown.classList.remove('active');
+            });
+
+            // Prevenir que se cierre al hacer clic dentro del menú
+            menu.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+        }
+    });
+</script>
+{% endblock %}

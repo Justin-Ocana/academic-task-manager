@@ -1,0 +1,159 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Historial - {{ group.name }} - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tracking.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <div class="history-header">
+        <div>
+            <a href="{% url 'group_detail' group.id %}" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Volver al grupo
+            </a>
+            <h1>Historial de {{ group.name }}</h1>
+            <p>Registro completo de actividad y cambios</p>
+        </div>
+    </div>
+
+    {% if can_revert and revertible_actions %}
+    <div class="revertible-section">
+        <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                </path>
+            </svg>
+            Acciones Revertibles
+        </h2>
+        <div class="revertible-list">
+            {% for action in revertible_actions %}
+            <div class="revertible-card">
+                <div class="revertible-info">
+                    <h4>{{ action.get_action_type_display }}</h4>
+                    <p>Por {{ action.performed_by.nombre }} {{ action.performed_by.apellido }}</p>
+                    <span class="revertible-time">{{ action.timestamp|timesince }} atrás</span>
+                </div>
+                <a href="{% url 'revert_action' action.id %}" class="btn-revert">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                        </path>
+                    </svg>
+                    Revertir
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="timeline-section">
+        <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Línea de Tiempo
+        </h2>
+
+        {% if all_events %}
+        <div class="timeline">
+            {% for event in all_events %}
+            <div class="timeline-item {% if event.type == 'task' %}timeline-task{% else %}timeline-group{% endif %}">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <div
+                            class="timeline-icon {% if event.type == 'task' %}icon-task{% else %}icon-group{% endif %}">
+                            {% if event.type == 'task' %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                                </path>
+                            </svg>
+                            {% else %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            {% endif %}
+                        </div>
+                        <div class="timeline-info">
+                            <h4>{{ event.action }}</h4>
+                            <span class="timeline-time">{{ event.timestamp|timesince }} atrás</span>
+                        </div>
+                    </div>
+
+                    <div class="timeline-body">
+                        {% if event.type == 'task' %}
+                        <p class="timeline-user">
+                            <strong>{{ event.user.nombre }} {{ event.user.apellido }}</strong>
+                            {% if event.task %}
+                            en <a href="{% url 'task_detail' event.task.id %}">{{ event.task_title }}</a>
+                            {% else %}
+                            en {{ event.task_title }}
+                            {% endif %}
+                        </p>
+                        {% if event.field_changed %}
+                        <div class="timeline-changes">
+                            <div class="change-display">
+                                <span class="change-field">{{ event.field_changed }}:</span>
+                                {% if event.old_value %}
+                                <span class="change-old">{{ event.old_value }}</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width: 16px; height: 16px;">
+                                    <path d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                                {% endif %}
+                                <span class="change-new">{{ event.new_value }}</span>
+                            </div>
+                            {% if can_revert and event.revertible_action %}
+                            {% if is_leader or event.task.created_by == request.user %}
+                            <a href="{% url 'revert_action' event.revertible_action.id %}" class="btn-revert-small"
+                                style="display: inline-flex; margin-top: 0.5rem; text-decoration: none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                    </path>
+                                </svg>
+                                Revertir
+                            </a>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <p class="timeline-user">
+                            <strong>{{ event.user.nombre }} {{ event.user.apellido }}</strong>
+                            {% if event.affected_user %}
+                            → <strong>{{ event.affected_user.nombre }} {{ event.affected_user.apellido }}</strong>
+                            {% endif %}
+                        </p>
+                        {% if event.description %}
+                        <p class="timeline-description">{{ event.description }}</p>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-history">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p>No hay actividad registrada aún</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

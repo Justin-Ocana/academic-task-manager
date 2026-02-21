@@ -1,0 +1,416 @@
+/* ============================================
+   AVATAR CATEGORIES - ESTILOS
+   ============================================ */
+
+.categories-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* PAGE HEADER */
+.page-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.page-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--azul-principal);
+    margin: 0 0 10px 0;
+}
+
+.page-header p {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* CURRENT AVATAR */
+.current-avatar-section {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--azul-principal);
+    margin: 0 0 20px 0;
+    text-align: center;
+}
+
+.current-avatar-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.current-avatar-display .user-avatar {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-info {
+    text-align: left;
+}
+
+.avatar-info h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--azul-principal);
+    margin: 0 0 5px 0;
+}
+
+.avatar-info p {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* CATEGORIES SECTION */
+.categories-section {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.category-card {
+    background: var(--gris-suave);
+    border-radius: 20px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border: 3px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(135, 169, 224, 0.1), rgba(246, 173, 25, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    border-color: var(--azul-pastel);
+}
+
+.category-card:hover::before {
+    opacity: 1;
+}
+
+.category-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--azul-pastel), var(--azul-principal));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.category-icon svg {
+    width: 50px;
+    height: 50px;
+    color: white;
+}
+
+.category-animals {
+    background: linear-gradient(135deg, #9370DB, #8A2BE2);
+}
+
+.category-disney {
+    background: linear-gradient(135deg, #FF8B94, #FF00FF);
+}
+
+.category-card:hover .category-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.category-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.category-content h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--azul-principal);
+    margin: 0 0 8px 0;
+}
+
+.category-content p {
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0 0 12px 0;
+}
+
+.category-preview {
+    display: flex;
+    gap: 8px;
+}
+
+.preview-icon {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+.category-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.category-arrow svg {
+    width: 20px;
+    height: 20px;
+    color: var(--azul-principal);
+    transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-arrow {
+    background: var(--naranja-eiwa);
+}
+
+.category-card:hover .category-arrow svg {
+    color: white;
+    transform: translateX(5px);
+}
+
+/* BACK ACTION */
+.back-action {
+    text-align: center;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .categories-container {
+        padding: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .current-avatar-display {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .avatar-info {
+        text-align: center;
+    }
+
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .category-card {
+        padding: 25px;
+    }
+
+    .category-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    .category-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+
+/* ============================================
+   MODO OSCURO - AVATAR CATEGORIES
+   ============================================ */
+
+body[data-theme="dark"] .categories-container,
+body.dark-mode .categories-container {
+    background: transparent;
+}
+
+body[data-theme="dark"] .current-avatar-section,
+body[data-theme="dark"] .categories-section,
+body.dark-mode .current-avatar-section,
+body.dark-mode .categories-section {
+    background: #1e293b !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+body[data-theme="dark"] .section-title,
+body[data-theme="dark"] .page-header h1,
+body.dark-mode .section-title,
+body.dark-mode .page-header h1 {
+    color: #e2e8f0 !important;
+}
+
+body[data-theme="dark"] .page-header p,
+body.dark-mode .page-header p {
+    color: #94a3b8 !important;
+}
+
+body[data-theme="dark"] .avatar-info h3,
+body.dark-mode .avatar-info h3 {
+    color: #e2e8f0 !important;
+}
+
+body[data-theme="dark"] .avatar-info p,
+body.dark-mode .avatar-info p {
+    color: #94a3b8 !important;
+}
+
+body[data-theme="dark"] .category-card,
+body.dark-mode .category-card {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+body[data-theme="dark"] .category-card:hover,
+body.dark-mode .category-card:hover {
+    border-color: var(--azul-pastel) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+body[data-theme="dark"] .category-content h3,
+body.dark-mode .category-content h3 {
+    color: #e2e8f0 !important;
+}
+
+body[data-theme="dark"] .category-content p,
+body.dark-mode .category-content p {
+    color: #94a3b8 !important;
+}
+
+body[data-theme="dark"] .category-arrow,
+body.dark-mode .category-arrow {
+    background: #1e293b !important;
+}
+
+body[data-theme="dark"] .category-arrow svg,
+body.dark-mode .category-arrow svg {
+    color: #e2e8f0 !important;
+}
+
+body[data-theme="dark"] .btn-secondary,
+body.dark-mode .btn-secondary {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+body[data-theme="dark"] .btn-secondary:hover,
+body.dark-mode .btn-secondary:hover {
+    background: #334155 !important;
+    border-color: var(--azul-pastel) !important;
+}
+
+
+/* ============================================
+   MODO OSCURO - CORRECCIÓN FINAL
+   ============================================ */
+
+body[data-theme="dark"] .categories-container {
+    background: transparent;
+}
+
+body[data-theme="dark"] .current-avatar-section,
+body[data-theme="dark"] .categories-section {
+    background: var(--dark-bg-card, #1e2533) !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+body[data-theme="dark"] .section-title,
+body[data-theme="dark"] .page-header h1 {
+    color: var(--dark-text-primary, #e8eaed) !important;
+}
+
+body[data-theme="dark"] .page-header p {
+    color: var(--dark-text-secondary, #b8bdc8) !important;
+}
+
+body[data-theme="dark"] .avatar-info h3 {
+    color: var(--dark-text-primary, #e8eaed) !important;
+}
+
+body[data-theme="dark"] .avatar-info p {
+    color: var(--dark-text-secondary, #b8bdc8) !important;
+}
+
+body[data-theme="dark"] .category-card {
+    background: var(--dark-bg-secondary, #1a1f2e) !important;
+    border-color: var(--dark-border, #2d3748) !important;
+}
+
+body[data-theme="dark"] .category-card:hover {
+    border-color: var(--dark-azul-pastel, #6bb3ff) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+body[data-theme="dark"] .category-content h3 {
+    color: var(--dark-text-primary, #e8eaed) !important;
+}
+
+body[data-theme="dark"] .category-content p {
+    color: var(--dark-text-secondary, #b8bdc8) !important;
+}
+
+body[data-theme="dark"] .category-arrow {
+    background: var(--dark-bg-card, #1e2533) !important;
+}
+
+body[data-theme="dark"] .category-arrow svg {
+    color: var(--dark-text-primary, #e8eaed) !important;
+}
+
+body[data-theme="dark"] .btn-secondary {
+    background: var(--dark-bg-secondary, #1a1f2e) !important;
+    border-color: var(--dark-border, #2d3748) !important;
+    color: var(--dark-text-primary, #e8eaed) !important;
+}
+
+body[data-theme="dark"] .btn-secondary:hover {
+    background: var(--dark-bg-hover, #2a3447) !important;
+    border-color: var(--dark-azul-pastel, #6bb3ff) !important;
+}

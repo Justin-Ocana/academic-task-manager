@@ -1,0 +1,97 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block title %}Personalizar Avatar - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/avatar-categories.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="categories-container">
+    <div class="page-header">
+        <h1>Personalizar Avatar</h1>
+        <p>Elige una categoría para comenzar</p>
+    </div>
+
+    <!-- Avatar Actual -->
+    <div class="current-avatar-section">
+        <h2 class="section-title">Tu Avatar Actual</h2>
+        <div class="current-avatar-display">
+            {% render_avatar user '120px' %}
+            <div class="avatar-info">
+                <h3>{{ user.nombre }} {{ user.apellido }}</h3>
+                <p>{{ user.email }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="categories-section">
+        <h2 class="section-title">Selecciona una Categoría</h2>
+        <div class="categories-grid">
+            <!-- Categoría: Agenda Virtual Eiwa -->
+            <a href="{% url 'avatar_settings_category' 'eiwa' %}" class="category-card">
+                <div class="category-icon">
+                    <svg viewBox="0 0 100 100" fill="none">
+                        <circle cx="35" cy="40" r="5" fill="currentColor"/>
+                        <circle cx="65" cy="40" r="5" fill="currentColor"/>
+                        <path d="M30 60 Q50 75 70 60" stroke="currentColor" stroke-width="5" stroke-linecap="round" fill="none"/>
+                    </svg>
+                </div>
+                <div class="category-content">
+                    <h3>Agenda Virtual Eiwa</h3>
+                    <p>40 diseños abstractos y expresivos</p>
+                </div>
+                <div class="category-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Categoría: Animales -->
+            <a href="{% url 'avatar_settings_category' 'animals' %}" class="category-card">
+                <div class="category-icon category-animals">
+                    <img src="{% static 'img/svg/animals/otter-svgrepo-com.svg' %}" alt="Animales" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="category-content">
+                    <h3>Animales</h3>
+                    <p>22 adorables animales</p>
+                </div>
+                <div class="category-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- Categoría: Disney -->
+            <a href="{% url 'avatar_settings_category' 'disney' %}" class="category-card">
+                <div class="category-icon category-disney">
+                    <img src="{% static 'img/svg/disney/Princess1.webp' %}" alt="Disney" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <div class="category-content">
+                    <h3>Disney</h3>
+                    <p>9 princesas mágicas</p>
+                </div>
+                <div class="category-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="back-action">
+        <a href="{% url 'profile_settings' %}" class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                <path d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Volver al Perfil
+        </a>
+    </div>
+</div>
+{% endblock %}

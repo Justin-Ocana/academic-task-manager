@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Error del Servidor | Agenda Virtual Eiwa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azul-principal: #006DB9;
+            --azul-secundario: #006DB9;
+            --azul-pastel: #87A9E0;
+            --naranja-eiwa: #F6AD19;
+            --naranja-pastel: #FDD28C;
+        }
+
+        :root[data-theme="dark"] {
+            --dark-bg-primary: #0f1419;
+            --dark-bg-secondary: #1a1f2e;
+            --dark-text-primary: #e8eaed;
+            --dark-text-secondary: #b8bdc8;
+            --dark-azul-principal: #4a90e2;
+            --dark-azul-secundario: #5ba3f5;
+            --dark-naranja-eiwa: #ffa726;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            transition: background 0.3s ease;
+        }
+
+        body[data-theme="dark"] {
+            background: linear-gradient(135deg, var(--dark-bg-primary) 0%, var(--dark-bg-secondary) 100%);
+        }
+
+        .error-container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 30px;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            animation: fadeInUp 0.6s ease-out;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        body[data-theme="dark"] .error-container {
+            background: var(--dark-bg-secondary);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, var(--naranja-pastel), var(--naranja-eiwa));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: rotate 2s linear infinite;
+        }
+
+        body[data-theme="dark"] .error-icon {
+            background: linear-gradient(135deg, var(--dark-naranja-eiwa), #d68910);
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-icon svg {
+            width: 60px;
+            height: 60px;
+            color: white;
+            animation: none;
+        }
+
+        .error-code {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 6rem;
+            color: var(--naranja-eiwa);
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+
+        body[data-theme="dark"] .error-code {
+            color: var(--dark-naranja-eiwa);
+        }
+
+        .error-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--azul-principal);
+            margin-bottom: 1rem;
+        }
+
+        body[data-theme="dark"] .error-title {
+            color: var(--dark-text-primary);
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: #718096;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        body[data-theme="dark"] .error-message {
+            color: var(--dark-text-secondary);
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--azul-pastel), var(--azul-secundario));
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 109, 185, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 109, 185, 0.4);
+        }
+
+        body[data-theme="dark"] .btn-primary {
+            background: linear-gradient(135deg, var(--dark-azul-principal), var(--dark-azul-secundario));
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--azul-principal);
+            border: 2px solid var(--azul-pastel);
+        }
+
+        .btn-secondary:hover {
+            background: var(--azul-pastel);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        body[data-theme="dark"] .btn-secondary {
+            background: var(--dark-bg-primary);
+            color: var(--dark-text-primary);
+            border-color: var(--dark-azul-principal);
+        }
+
+        body[data-theme="dark"] .btn-secondary:hover {
+            background: var(--dark-azul-principal);
+            color: white;
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        body[data-theme="dark"] .theme-toggle {
+            background: var(--dark-bg-secondary);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--azul-principal);
+        }
+
+        body[data-theme="dark"] .theme-toggle svg {
+            color: var(--dark-naranja-eiwa);
+        }
+
+        .sun-icon {
+            display: none;
+        }
+
+        body[data-theme="dark"] .sun-icon {
+            display: block;
+        }
+
+        body[data-theme="dark"] .moon-icon {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 4rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-message {
+                font-size: 1rem;
+            }
+
+            .error-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <div class="error-container">
+        <div class="error-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+        </div>
+
+        <div class="error-code">500</div>
+        <h1 class="error-title">Error del Servidor</h1>
+        <p class="error-message">
+            Algo salió mal en nuestro servidor. Nuestro equipo ha sido notificado 
+            y está trabajando para solucionarlo. Por favor, intenta nuevamente más tarde.
+        </p>
+
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Ir al Inicio
+            </a>
+            <button onclick="location.reload()" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Reintentar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Cargar tema guardado
+        const savedTheme = localStorage.getItem('eiwa-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.body.setAttribute('data-theme', savedTheme);
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('eiwa-theme', newTheme);
+        }
+    </script>
+</body>
+</html>

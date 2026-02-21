@@ -1,0 +1,49 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Materias - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/subjects.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Materias</h1>
+    <p>Gestiona las materias de tus grupos</p>
+</div>
+
+{% if groups_with_subjects %}
+{% for item in groups_with_subjects %}
+<div class="group-section">
+    <div class="group-section-header">
+        <h2>{{ item.group.name }}</h2>
+        <span class="subjects-count">{{ item.subjects_count }} materia{{ item.subjects_count|pluralize }}</span>
+    </div>
+
+    <a href="{% url 'group_subjects' item.group.id %}" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
+            <path
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+            </path>
+        </svg>
+        Ver Materias
+    </a>
+</div>
+{% endfor %}
+{% else %}
+<div class="empty-state-card">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+    </svg>
+    <h3>No tienes grupos aún</h3>
+    <p>Únete o crea un grupo para comenzar a agregar materias</p>
+    <div class="empty-actions">
+        <a href="{% url 'create_group' %}" class="btn btn-primary">Crear Grupo</a>
+        <a href="{% url 'join_group' %}" class="btn btn-secondary">Unirse a Grupo</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

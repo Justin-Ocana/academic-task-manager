@@ -1,0 +1,42 @@
+/* ============================================
+   DASHBOARD FOOTER - MINIMALISTA Y LIMPIO
+   ============================================ */
+.dashboard-footer {
+    background: #ffffff;
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid #e5e5e5;
+    margin-top: 40px;
+}
+
+.dashboard-footer .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-footer .footer-links {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.dashboard-footer .footer-links a {
+    color: #666666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.dashboard-footer .footer-links a:hover {
+    color: #2c5aa0;
+    text-decoration: underline;
+}
+
+.dashboard-footer .footer-links .separator {
+    margin: 0 10px;
+    color: #cccccc;
+}
+
+.dashboard-footer .footer-copyright {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #999999;
+}

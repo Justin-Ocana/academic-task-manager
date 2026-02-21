@@ -1,0 +1,2 @@
+python manage.py cleanup_old_actions  # Limpiar acciones mayores a 7 días
+python manage.py cleanup_archived_files  # Eliminar archivos de tareas archivadas

@@ -1,0 +1,314 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Personalizar Avatar - Animales{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/avatar-settings.css' %}">
+<style>
+    .avatar-shape img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .avatar-preview-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="page-header">
+        <h1>Avatares de Animales</h1>
+        <p>Elige tu animal favorito</p>
+    </div>
+
+    <form method="post" class="avatar-form" id="avatarForm">
+        {% csrf_token %}
+        <input type="hidden" name="avatar_category" value="animals">
+        <input type="hidden" name="svg_color" value="transparent">
+
+        <!-- Preview Section -->
+        <div class="avatar-preview-section">
+            <h2 class="section-title">Vista Previa</h2>
+            <div class="avatar-preview-container">
+                <div class="avatar-preview-large" id="avatarPreview">
+                    <!-- Image will be injected here -->
+                </div>
+                <div class="avatar-info">
+                    <h3>{{ user.nombre }} {{ user.apellido }}</h3>
+                    <p>{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar Selection -->
+        <div class="form-group avatar-group">
+            <label class="form-label">Selecciona tu Animal:</label>
+            <div class="avatar-selector">
+                <!-- Avatar 1: Dog Breed 1 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="dog-breed-1" checked data-svg="{% static 'img/svg/animals/dog-breed-svgrepo-com (1).svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/dog-breed-svgrepo-com (1).svg' %}" alt="Dog Breed 1">
+                    </span>
+                </label>
+
+                <!-- Avatar 2: Dog Breed 2 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="dog-breed-2" data-svg="{% static 'img/svg/animals/dog-breed-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/dog-breed-svgrepo-com.svg' %}" alt="Dog Breed 2">
+                    </span>
+                </label>
+
+                <!-- Avatar 3: Dog -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="dog" data-svg="{% static 'img/svg/animals/dog-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/dog-svgrepo-com.svg' %}" alt="Dog">
+                    </span>
+                </label>
+
+                <!-- Avatar 4: Dog Face -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="dog-face" data-svg="{% static 'img/svg/animals/dog-face-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/dog-face-svgrepo-com.svg' %}" alt="Dog Face">
+                    </span>
+                </label>
+
+                <!-- Avatar 5: Cat 1 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="cat-1" data-svg="{% static 'img/svg/animals/cat-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/cat-svgrepo-com.svg' %}" alt="Cat 1">
+                    </span>
+                </label>
+
+                <!-- Avatar 6: Cat 2 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="cat-2" data-svg="{% static 'img/svg/animals/cat-svgrepo-com (1).svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/cat-svgrepo-com (1).svg' %}" alt="Cat 2">
+                    </span>
+                </label>
+
+                <!-- Avatar 7: Cat Smile -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="cat-smile" data-svg="{% static 'img/svg/animals/cat-with-wry-smile-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/cat-with-wry-smile-svgrepo-com.svg' %}" alt="Cat Smile">
+                    </span>
+                </label>
+
+                <!-- Avatar 8: Cat Halloween 1 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="cat-halloween-1" data-svg="{% static 'img/svg/animals/cat-halloween-kitty-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/cat-halloween-kitty-svgrepo-com.svg' %}" alt="Cat Halloween 1">
+                    </span>
+                </label>
+
+                <!-- Avatar 9: Cat Halloween 2 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="cat-halloween-2" data-svg="{% static 'img/svg/animals/cat-halloween-kitty-2-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/cat-halloween-kitty-2-svgrepo-com.svg' %}" alt="Cat Halloween 2">
+                    </span>
+                </label>
+
+                <!-- Avatar 10: Fox -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="fox" data-svg="{% static 'img/svg/animals/animal-cute-fox-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-cute-fox-svgrepo-com.svg' %}" alt="Fox">
+                    </span>
+                </label>
+
+                <!-- Avatar 11: Giraffe -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="giraffe" data-svg="{% static 'img/svg/animals/giraffe-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/giraffe-svgrepo-com.svg' %}" alt="Giraffe">
+                    </span>
+                </label>
+
+                <!-- Avatar 12: Chipmunk -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="chipmunk" data-svg="{% static 'img/svg/animals/chipmunk-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/chipmunk-svgrepo-com.svg' %}" alt="Chipmunk">
+                    </span>
+                </label>
+
+                <!-- Avatar 13: Otter 1 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="otter-1" data-svg="{% static 'img/svg/animals/otter-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/otter-svgrepo-com.svg' %}" alt="Otter 1">
+                    </span>
+                </label>
+
+                <!-- Avatar 14: Otter 2 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="otter-2" data-svg="{% static 'img/svg/animals/otter-svgrepo-com (1).svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/otter-svgrepo-com (1).svg' %}" alt="Otter 2">
+                    </span>
+                </label>
+
+                <!-- Avatar 15: Carnivore 4 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="carnivore-4" data-svg="{% static 'img/svg/animals/animal-carnivore-cartoon-4-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-carnivore-cartoon-4-svgrepo-com.svg' %}" alt="Carnivore">
+                    </span>
+                </label>
+
+                <!-- Avatar 16: Carnivore 6 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="carnivore-6" data-svg="{% static 'img/svg/animals/animal-carnivore-cartoon-6-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-carnivore-cartoon-6-svgrepo-com.svg' %}" alt="Carnivore 2">
+                    </span>
+                </label>
+
+                <!-- Avatar 17: Farm Animal 1 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="farm-1" data-svg="{% static 'img/svg/animals/animal-cartoon-farm-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-cartoon-farm-svgrepo-com.svg' %}" alt="Farm Animal">
+                    </span>
+                </label>
+
+                <!-- Avatar 18: Farm Animal 2 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="farm-2" data-svg="{% static 'img/svg/animals/animal-cartoon-farm-2-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-cartoon-farm-2-svgrepo-com.svg' %}" alt="Farm Animal 2">
+                    </span>
+                </label>
+
+                <!-- Avatar 19: Fauna 1 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="fauna-1" data-svg="{% static 'img/svg/animals/animal-cartoon-fauna-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-cartoon-fauna-svgrepo-com.svg' %}" alt="Fauna">
+                    </span>
+                </label>
+
+                <!-- Avatar 20: Fauna 3 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="fauna-3" data-svg="{% static 'img/svg/animals/animal-cartoon-fauna-3-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-cartoon-fauna-3-svgrepo-com.svg' %}" alt="Fauna 3">
+                    </span>
+                </label>
+
+                <!-- Avatar 21: Fauna 4 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="fauna-4" data-svg="{% static 'img/svg/animals/animal-cartoon-fauna-4-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-cartoon-fauna-4-svgrepo-com.svg' %}" alt="Fauna 4">
+                    </span>
+                </label>
+
+                <!-- Avatar 22: Fauna 5 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="fauna-5" data-svg="{% static 'img/svg/animals/animal-cartoon-fauna-5-svgrepo-com.svg' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/animals/animal-cartoon-fauna-5-svgrepo-com.svg' %}" alt="Fauna 5">
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Background Color Section -->
+        <div class="form-group color-section">
+            <button type="button" class="color-section-toggle" id="bgColorToggle">
+                <div class="toggle-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    </svg>
+                    <span>Color de Fondo</span>
+                </div>
+                <div class="toggle-preview" id="bgColorPreview" style="background: #A8E6CF;"></div>
+                <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+            
+            <div class="color-group collapsed" id="bgColorGroup">
+                <div class="color-selector" id="bgColorSelector">
+                    <!-- Colors will be generated by JavaScript -->
+                </div>
+
+                <!-- Custom Color Picker for Background -->
+                <div class="custom-color-picker" id="bgCustomColorPicker">
+                    <label class="form-label">Color Personalizado:</label>
+                    
+                    <div class="visual-color-picker">
+                        <input type="color" id="bgVisualColorPicker" value="#A8E6CF">
+                        <label for="bgVisualColorPicker" class="color-picker-button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                            </svg>
+                            Seleccionar Color
+                        </label>
+                    </div>
+
+                    <div class="rgb-inputs">
+                        <div class="rgb-input-group">
+                            <label>R</label>
+                            <input type="number" id="bgColorR" min="0" max="255" value="168">
+                        </div>
+                        <div class="rgb-input-group">
+                            <label>G</label>
+                            <input type="number" id="bgColorG" min="0" max="255" value="230">
+                        </div>
+                        <div class="rgb-input-group">
+                            <label>B</label>
+                            <input type="number" id="bgColorB" min="0" max="255" value="207">
+                        </div>
+                    </div>
+
+                    <div class="hex-display">
+                        <label>HEX:</label>
+                        <input type="text" id="bgHexValue" value="#A8E6CF" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'avatar_settings' %}" class="btn btn-secondary">Volver a Categorías</a>
+            <button type="submit" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Guardar Avatar
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pasar valores del servidor al JavaScript
+    window.AVATAR_CONFIG = {
+        style: '{{ user.avatar_style|default:"dog-breed-1" }}',
+        bgColor: '{{ user.avatar_bg_color|default:"#A8E6CF" }}',
+        svgColor: 'transparent',
+        category: 'animals'
+    };
+</script>
+<script src="{% static 'js/avatar-settings-animals.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,14 @@
+# Ignorar templates de Django para evitar que el autoformatter rompa las etiquetas
+**/templates/**/*.html
+*.html
+
+# Ignorar archivos generados
+*.pyc
+__pycache__/
+*.sqlite3
+*.db
+staticfiles/
+media/
+
+# Ignorar node_modules si existen
+node_modules/

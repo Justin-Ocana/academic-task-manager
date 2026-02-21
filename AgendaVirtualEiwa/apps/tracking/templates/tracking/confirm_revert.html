@@ -1,0 +1,236 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+{% load subjects_tags %}
+
+{% block title %}Confirmar Reversión - {{ group.name }} - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tracking.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="history-container">
+
+    <div class="history-header">
+        <div>
+            <a href="{% url 'group_history' group.id %}" class="back-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Volver al historial
+            </a>
+
+            <h1>Confirmar Reversión</h1>
+            <p>Revisa los cambios que se revertirán</p>
+        </div>
+    </div>
+
+    <div class="revert-confirm-section">
+
+        <!-- ADVERTENCIA -->
+        <div class="revert-warning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 9v2m0 4h.01M5.062 19h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+
+            <div>
+                <h3>¿Estás seguro de revertir esta acción?</h3>
+                <p>Esta acción no se puede deshacer. Los cambios volverán a su estado anterior.</p>
+            </div>
+        </div>
+
+        <!-- DETALLES -->
+        <div class="revert-details">
+            <h3>Detalles de la acción</h3>
+
+            <div class="detail-row">
+                <span class="detail-label">Tipo de acción:</span>
+                <span class="detail-value">{{ revertible.get_action_type_display }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Realizada por:</span>
+                <span class="detail-value">
+                    {{ revertible.performed_by.nombre }} {{ revertible.performed_by.apellido }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Fecha:</span>
+                <span class="detail-value">{{ revertible.timestamp|date:"d/m/Y H:i" }}</span>
+            </div>
+
+            {% if revertible.action_type == 'task_edit' and revertible.task %}
+            <div class="detail-row">
+                <span class="detail-label">Tarea:</span>
+                <span class="detail-value">{{ revertible.task.title }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- SI ES EDICIÓN -->
+        {% if revertible.action_type == 'task_edit' %}
+        <div class="revert-changes">
+            <h3>Cambios que se revertirán</h3>
+            <p class="changes-subtitle">Los valores actuales volverán a los valores anteriores:</p>
+
+            <div class="changes-list">
+
+                {% if revertible.snapshot_data.description %}
+                <div class="change-item">
+                    <span class="change-field-name">Descripción</span>
+
+                    <div class="change-comparison">
+                        <div class="change-box change-current-box">
+                            <span class="change-label">Actual</span>
+                            <span class="change-value">
+                                {{ revertible.task.description|default:"Sin descripción" }}
+                            </span>
+                        </div>
+
+                        <svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+
+                        <div class="change-box change-revert-box">
+                            <span class="change-label">Se revertirá a</span>
+                            <span class="change-value">
+                                {{ revertible.snapshot_data.description|default:"Sin descripción" }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if revertible.snapshot_data.subject_id %}
+                <div class="change-item">
+                    <span class="change-field-name">Materia</span>
+
+                    <div class="change-comparison">
+                        <div class="change-box change-current-box">
+                            <span class="change-label">Actual</span>
+                            <span class="change-value">
+                                {{ revertible.task.subject.name|default:"Sin materia" }}
+                            </span>
+                        </div>
+
+                        <svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+
+                        <div class="change-box change-revert-box">
+                            <span class="change-label">Se revertirá a</span>
+                            <span class="change-value">
+                                {{ revertible.snapshot_data.subject_id|get_subject_name }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if revertible.snapshot_data.due_date %}
+                <div class="change-item">
+                    <span class="change-field-name">Fecha de entrega</span>
+
+                    <div class="change-comparison">
+                        <div class="change-box change-current-box">
+                            <span class="change-label">Actual</span>
+                            <span class="change-value">
+                                {{ revertible.task.due_date|date:"d/m/Y" }}
+                            </span>
+                        </div>
+
+                        <svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+
+                        <div class="change-box change-revert-box">
+                            <span class="change-label">Se revertirá a</span>
+                            <span class="change-value">{{ revertible.snapshot_data.due_date }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if revertible.snapshot_data.assigned_date %}
+                <div class="change-item">
+                    <span class="change-field-name">Fecha mandada</span>
+
+                    <div class="change-comparison">
+                        <div class="change-box change-current-box">
+                            <span class="change-label">Actual</span>
+                            <span class="change-value">
+                                {{ revertible.task.assigned_date|date:"d/m/Y" }}
+                            </span>
+                        </div>
+
+                        <svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+
+                        <div class="change-box change-revert-box">
+                            <span class="change-label">Se revertirá a</span>
+                            <span class="change-value">{{ revertible.snapshot_data.assigned_date }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if revertible.snapshot_data.priority %}
+                <div class="change-item">
+                    <span class="change-field-name">Prioridad</span>
+
+                    <div class="change-comparison">
+                        <div class="change-box change-current-box">
+                            <span class="change-label">Actual</span>
+                            <span class="change-value">{{ revertible.task.get_priority_display }}</span>
+                        </div>
+
+                        <svg class="change-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+
+                        <div class="change-box change-revert-box">
+                            <span class="change-label">Se revertirá a</span>
+                            <span class="change-value">{{ revertible.snapshot_data.priority }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <!-- SI ES ELIMINACIÓN -->
+        {% elif revertible.action_type == 'task_delete' %}
+        <div class="revert-changes">
+            <h3>Tarea que se restaurará</h3>
+
+            <div class="restore-info">
+                <p><strong>Título:</strong> {{ revertible.snapshot_data.title }}</p>
+                <p><strong>Descripción:</strong> {{ revertible.snapshot_data.description|default:"Sin descripción" }}</p>
+                <p><strong>Fecha de entrega:</strong> {{ revertible.snapshot_data.due_date }}</p>
+                <p><strong>Fecha mandada:</strong> {{ revertible.snapshot_data.assigned_date }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- ACCIONES -->
+        <div class="revert-actions">
+
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-confirm-revert">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Confirmar Reversión
+                </button>
+            </form>
+
+            <a href="{% url 'group_history' group.id %}" class="btn-cancel-revert">Cancelar</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

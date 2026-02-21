@@ -1,0 +1,273 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Test de Notificaciones{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 50px auto; padding: 20px;">
+    <h1 style="font-family: 'Bebas Neue', sans-serif; color: var(--azul-principal); margin-bottom: 30px;">
+        Test de Notificaciones Push
+    </h1>
+
+    <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h2 style="margin-bottom: 20px;">Estado del Sistema</h2>
+
+        <div id="status" style="margin-bottom: 30px; padding: 15px; background: #f5f5f5; border-radius: 10px;">
+            <p><strong>Permiso de notificaciones:</strong> <span id="permission">Verificando...</span></p>
+            <p><strong>Service Worker:</strong> <span id="sw-status">Verificando...</span></p>
+            <p><strong>NotificationManager:</strong> <span id="nm-status">Verificando...</span></p>
+        </div>
+
+        <h2 style="margin-bottom: 20px;">Probar Notificaciones</h2>
+
+        <div style="display: grid; gap: 15px;">
+            <button onclick="testBasicNotification()" class="test-btn"
+                style="background: linear-gradient(135deg, var(--azul-pastel), var(--azul-secundario));">
+                Notificación Básica
+            </button>
+
+            <button onclick="testNewTask()" class="test-btn"
+                style="background: linear-gradient(135deg, #66bb6a, #4caf50);">
+                Nueva Tarea de Biología
+            </button>
+
+            <button onclick="testTaskDueSoon()" class="test-btn"
+                style="background: linear-gradient(135deg, #ffa726, #ff9800);">
+                Tarea Próxima a Vencer
+            </button>
+
+            <button onclick="testTaskOverdue()" class="test-btn"
+                style="background: linear-gradient(135deg, #ef5350, #f44336);">
+                Tarea Vencida
+            </button>
+
+            <button onclick="testTodayTasks()" class="test-btn"
+                style="background: linear-gradient(135deg, #42a5f5, #2196f3);">
+                Tareas de Hoy
+            </button>
+
+            <button onclick="testTomorrowTasks()" class="test-btn"
+                style="background: linear-gradient(135deg, #ab47bc, #9c27b0);">
+                Tareas de Mañana
+            </button>
+
+            <button onclick="requestPermission()" class="test-btn"
+                style="background: linear-gradient(135deg, #26a69a, #009688);">
+                Solicitar Permiso
+            </button>
+
+            <button onclick="testDirectNotification()" class="test-btn"
+                style="background: linear-gradient(135deg, #ff7043, #ff5722);">
+                Notificación Directa (Sin SW)
+            </button>
+        </div>
+
+        <div id="log"
+            style="margin-top: 30px; padding: 15px; background: #f9f9f9; border-radius: 10px; max-height: 300px; overflow-y: auto;">
+            <h3>Log de Eventos:</h3>
+            <div id="log-content" style="font-family: monospace; font-size: 0.9rem;"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .test-btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 50px;
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .test-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .test-btn:active {
+        transform: translateY(0);
+    }
+</style>
+
+<script>
+    function log(message) {
+        const logContent = document.getElementById('log-content');
+        const time = new Date().toLocaleTimeString();
+        logContent.innerHTML += `<div>[${time}] ${message}</div>`;
+        logContent.scrollTop = logContent.scrollHeight;
+    }
+
+    async function updateStatus() {
+        // Permiso
+        const permission = Notification.permission;
+        document.getElementById('permission').textContent = permission;
+        document.getElementById('permission').style.color = permission === 'granted' ? 'green' : 'red';
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                document.getElementById('sw-status').textContent = 'Activo';
+                document.getElementById('sw-status').style.color = 'green';
+                log('Service Worker activo: ' + registration.scope);
+            } catch (error) {
+                document.getElementById('sw-status').textContent = 'Error: ' + error.message;
+                document.getElementById('sw-status').style.color = 'red';
+                log('ERROR Service Worker: ' + error.message);
+            }
+        } else {
+            document.getElementById('sw-status').textContent = 'No soportado';
+            document.getElementById('sw-status').style.color = 'red';
+            log('Service Worker no soportado');
+        }
+
+        // NotificationManager
+        if (window.notificationManager) {
+            document.getElementById('nm-status').textContent = 'Disponible';
+            document.getElementById('nm-status').style.color = 'green';
+            log('NotificationManager disponible');
+        } else {
+            document.getElementById('nm-status').textContent = 'No disponible';
+            document.getElementById('nm-status').style.color = 'red';
+            log('NotificationManager NO disponible');
+        }
+    }
+
+    async function requestPermission() {
+        log('Solicitando permiso...');
+        if (window.notificationManager) {
+            const granted = await window.notificationManager.requestPermission();
+            log(granted ? 'Permiso concedido' : 'Permiso denegado');
+            updateStatus();
+        } else {
+            log('ERROR: NotificationManager no disponible');
+        }
+    }
+
+    function testBasicNotification() {
+        log('Enviando notificación básica...');
+        if (window.notificationManager) {
+            window.notificationManager.showNotification('Prueba de Notificación', {
+                body: 'Esta es una notificación de prueba',
+                icon: '/static/images/task-icon.png'
+            });
+            log('Notificación enviada');
+        } else {
+            log('ERROR: NotificationManager no disponible');
+        }
+    }
+
+    function testNewTask() {
+        log('Enviando notificación de nueva tarea...');
+        if (window.notificationManager) {
+            const task = {
+                id: 1,
+                title: 'Pasar materia',
+                subject: 'Biología'
+            };
+            window.notificationManager.notifyNewTask(task);
+            log('Notificación de nueva tarea enviada');
+        } else {
+            log('ERROR: NotificationManager no disponible');
+        }
+    }
+
+    function testTaskDueSoon() {
+        log('Enviando notificación de tarea próxima a vencer...');
+        if (window.notificationManager) {
+            const task = {
+                id: 2,
+                title: 'Entregar proyecto',
+                subject: 'Matemáticas'
+            };
+            window.notificationManager.notifyTaskDueSoon(task, 6);
+            log('Notificación de tarea próxima enviada');
+        } else {
+            log('ERROR: NotificationManager no disponible');
+        }
+    }
+
+    function testTaskOverdue() {
+        log('Enviando notificación de tarea vencida...');
+        if (window.notificationManager) {
+            const task = {
+                id: 3,
+                title: 'Hacer ejercicios',
+                subject: 'Física'
+            };
+            window.notificationManager.notifyTaskOverdue(task);
+            log('Notificación de tarea vencida enviada');
+        } else {
+            log('ERROR: NotificationManager no disponible');
+        }
+    }
+
+    function testTodayTasks() {
+        log('Enviando notificación de tareas de hoy...');
+        if (window.notificationManager) {
+            const tasks = [
+                { title: 'Tarea 1' },
+                { title: 'Tarea 2' },
+                { title: 'Tarea 3' }
+            ];
+            window.notificationManager.notifyTodayTasks(tasks);
+            log('Notificación de tareas de hoy enviada');
+        } else {
+            log('ERROR: NotificationManager no disponible');
+        }
+    }
+
+    function testTomorrowTasks() {
+        log('Enviando notificación de tareas de mañana...');
+        if (window.notificationManager) {
+            const tasks = [
+                { title: 'Tarea 1' },
+                { title: 'Tarea 2' }
+            ];
+            window.notificationManager.notifyTomorrowTasks(tasks);
+            log('Notificación de tareas de mañana enviada');
+        } else {
+            log('ERROR: NotificationManager no disponible');
+        }
+    }
+
+    function testDirectNotification() {
+        log('Probando notificación directa con Notification API...');
+
+        if (Notification.permission !== 'granted') {
+            log('ERROR: No hay permiso para notificaciones');
+            return;
+        }
+
+        try {
+            const notification = new Notification('Prueba Directa', {
+                body: 'Esta es una notificación usando Notification API directamente',
+                icon: '/static/img/logoeiwa.png',
+                badge: '/static/img/logoeiwa.png',
+                vibrate: [200, 100, 200]
+            });
+
+            notification.onclick = function () {
+                log('Notificación clickeada');
+                window.focus();
+                notification.close();
+            };
+
+            log('Notificación directa creada exitosamente');
+        } catch (error) {
+            log('ERROR al crear notificación directa: ' + error.message);
+            console.error('Error completo:', error);
+        }
+    }
+
+    // Actualizar estado al cargar
+    setTimeout(() => {
+        updateStatus();
+        log('Sistema inicializado');
+    }, 1000);
+</script>
+{% endblock %}

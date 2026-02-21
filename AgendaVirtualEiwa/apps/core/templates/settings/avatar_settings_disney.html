@@ -1,0 +1,210 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Personalizar Avatar - Disney{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/avatar-settings.css' %}">
+<style>
+    .avatar-shape img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+    
+    .avatar-preview-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="page-header">
+        <h1>Avatares Disney</h1>
+        <p>Elige tu personaje mágico favorito</p>
+    </div>
+
+    <form method="post" class="avatar-form" id="avatarForm">
+        {% csrf_token %}
+        <input type="hidden" name="avatar_category" value="disney">
+        <input type="hidden" name="svg_color" value="#FFFFFF">
+
+        <!-- Preview Section -->
+        <div class="avatar-preview-section">
+            <h2 class="section-title">Vista Previa</h2>
+            <div class="avatar-preview-container">
+                <div class="avatar-preview-large" id="avatarPreview">
+                    <!-- SVG will be injected here -->
+                </div>
+                <div class="avatar-info">
+                    <h3>{{ user.nombre }} {{ user.apellido }}</h3>
+                    <p>{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar Selection -->
+        <div class="form-group avatar-group">
+            <label class="form-label">Selecciona tu Princesa:</label>
+            <div class="avatar-selector">
+                <!-- Princess 1 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-1" checked data-img="{% static 'img/svg/disney/Princess1.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess1.webp' %}" alt="Princess 1">
+                    </span>
+                </label>
+
+                <!-- Princess 2 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-2" data-img="{% static 'img/svg/disney/Princess2.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess2.webp' %}" alt="Princess 2">
+                    </span>
+                </label>
+
+                <!-- Princess 3 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-3" data-img="{% static 'img/svg/disney/Princess3.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess3.webp' %}" alt="Princess 3">
+                    </span>
+                </label>
+
+                <!-- Princess 4 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-4" data-img="{% static 'img/svg/disney/Princess4.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess4.webp' %}" alt="Princess 4">
+                    </span>
+                </label>
+
+                <!-- Princess 5 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-5" data-img="{% static 'img/svg/disney/Princess5.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess5.webp' %}" alt="Princess 5">
+                    </span>
+                </label>
+
+                <!-- Princess 6 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-6" data-img="{% static 'img/svg/disney/Princess6.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess6.webp' %}" alt="Princess 6">
+                    </span>
+                </label>
+
+                <!-- Princess 7 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-7" data-img="{% static 'img/svg/disney/Princess7.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess7.webp' %}" alt="Princess 7">
+                    </span>
+                </label>
+
+                <!-- Princess 8 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-8" data-img="{% static 'img/svg/disney/Princess8.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess8.webp' %}" alt="Princess 8">
+                    </span>
+                </label>
+
+                <!-- Princess 9 -->
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_style" value="princess-9" data-img="{% static 'img/svg/disney/Princess9.webp' %}">
+                    <span class="avatar-shape">
+                        <img src="{% static 'img/svg/disney/Princess9.webp' %}" alt="Princess 9">
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Background Color Section -->
+        <div class="form-group color-section">
+            <button type="button" class="color-section-toggle" id="bgColorToggle">
+                <div class="toggle-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    </svg>
+                    <span>Color de Fondo</span>
+                </div>
+                <div class="toggle-preview" id="bgColorPreview" style="background: #FFB6C1;"></div>
+                <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+            
+            <div class="color-group collapsed" id="bgColorGroup">
+                <div class="color-selector" id="bgColorSelector">
+                    <!-- Colors will be generated by JavaScript -->
+                </div>
+
+                <!-- Custom Color Picker for Background -->
+                <div class="custom-color-picker" id="bgCustomColorPicker">
+                    <label class="form-label">Color Personalizado:</label>
+                    
+                    <div class="visual-color-picker">
+                        <input type="color" id="bgVisualColorPicker" value="#FFB6C1">
+                        <label for="bgVisualColorPicker" class="color-picker-button">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                            </svg>
+                            Seleccionar Color
+                        </label>
+                    </div>
+
+                    <div class="rgb-inputs">
+                        <div class="rgb-input-group">
+                            <label>R</label>
+                            <input type="number" id="bgColorR" min="0" max="255" value="255">
+                        </div>
+                        <div class="rgb-input-group">
+                            <label>G</label>
+                            <input type="number" id="bgColorG" min="0" max="255" value="182">
+                        </div>
+                        <div class="rgb-input-group">
+                            <label>B</label>
+                            <input type="number" id="bgColorB" min="0" max="255" value="193">
+                        </div>
+                    </div>
+
+                    <div class="hex-display">
+                        <label>HEX:</label>
+                        <input type="text" id="bgHexValue" value="#FFB6C1" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'avatar_settings' %}" class="btn btn-secondary">Volver a Categorías</a>
+            <button type="submit" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Guardar Avatar
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pasar valores del servidor al JavaScript
+    window.AVATAR_CONFIG = {
+        style: '{{ user.avatar_style|default:"princess-1" }}',
+        bgColor: '{{ user.avatar_bg_color|default:"#FFB6C1" }}',
+        svgColor: '#FFFFFF',
+        category: 'disney'
+    };
+</script>
+<script src="{% static 'js/avatar-settings-disney.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,319 @@
+{% load static %}
+{% load avatar_tags %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Plataforma colaborativa para gestionar tareas, grupos de estudio y calendarios académicos">
+    <meta name="theme-color" content="#213E89">
+    <title>{% block title %}Dashboard - Agenda Virtual Eiwa{% endblock %}</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="{% static 'img/logoeiwa.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/EIWALOGOMOBILE.png' %}">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+
+    <!-- Carga instantánea del tema (previene flash blanco) -->
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem('eiwa-theme');
+                // Siempre usar modo claro por defecto, solo oscuro si está guardado explícitamente
+                const theme = savedTheme || 'light';
+                const root = document.documentElement;
+
+                // Aplicar tema inmediatamente
+                root.setAttribute('data-theme', theme);
+
+                // Aplicar colores críticos inline para evitar flash
+                if (theme === 'dark') {
+                    root.style.setProperty('--bg-color', '#0f1419');
+                    root.style.backgroundColor = '#0f1419';
+                    root.style.color = '#e8eaed';
+                }
+            } catch (e) {
+                console.warn('Error al cargar tema:', e);
+            }
+        })();
+    </script>
+
+    <!-- Estilos críticos inline para modo oscuro -->
+    <style>
+        /* Prevenir flash blanco completamente */
+        html[data-theme="dark"] {
+            background-color: #0f1419 !important;
+            color: #e8eaed !important;
+        }
+
+        html[data-theme="dark"] body {
+            background-color: #0f1419 !important;
+            color: #e8eaed !important;
+        }
+
+        /* Transición suave al cargar */
+        html {
+            transition: none !important;
+        }
+
+        body {
+            transition: none !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard-footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+    <link rel="stylesheet" href="{% static 'css/confirm-modal.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile-menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dark-mode.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="dashboard-body">
+    <!-- Overlay para cerrar sidebar en móvil -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="{% static 'img/logoeiwa.png' %}" alt="Logo EIWA" class="sidebar-logo">
+            <h2 class="sidebar-title">AGENDA EIWA</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="{% url 'task_list' %}" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                        </path>
+                    </svg>
+                </span>
+                <span class="nav-text">Tareas</span>
+            </a>
+            <a href="{% url 'calendar' %}" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+                <span class="nav-text">Calendario</span>
+            </a>
+            <a href="{% url 'group_list' %}" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </span>
+                <span class="nav-text">Grupos</span>
+            </a>
+            <a href="{% url 'subject_list' %}" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </span>
+                <span class="nav-text">Materias</span>
+            </a>
+            <a href="{% url 'requests_list' %}" class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </span>
+                <span class="nav-text">Solicitudes</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="{% url 'logout' %}" class="nav-item logout">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </span>
+                <span class="nav-text">Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <div class="header-right">
+                <!-- Notificaciones -->
+                <div class="notifications-wrapper">
+                    <button class="notification-bell" id="notificationBell">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </button>
+                    <div class="notifications-dropdown" id="notificationsDropdown">
+                        <div class="notifications-header">
+                            <h3>Notificaciones</h3>
+                            <button class="mark-all-read" id="markAllRead">Marcar todas como leídas</button>
+                        </div>
+                        <div class="notifications-list" id="notificationsList">
+                            <div class="loading-notifications">
+                                <div class="spinner"></div>
+                                <p>Cargando notificaciones...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-profile-wrapper">
+                    {% render_avatar user '45px' %}
+
+                    <!-- Menú desplegable del perfil -->
+                    <div class="profile-dropdown">
+                        <div class="profile-dropdown-header">
+                            {% render_avatar user '60px' %}
+                            <div class="profile-dropdown-name">{{ user.nombre }} {{ user.apellido }}</div>
+                            <div class="profile-dropdown-email">{{ user.email }}</div>
+                        </div>
+
+                        <div class="profile-dropdown-menu">
+                            <a href="{% url 'profile_settings' %}" class="profile-menu-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span>Mi Perfil</span>
+                            </a>
+
+                            <a href="{% url 'profile_settings' %}#preferences" class="profile-menu-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path
+                                        d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m0-6l4.2-4.2">
+                                    </path>
+                                </svg>
+                                <span>Preferencias</span>
+                            </a>
+
+                            <a href="{% url 'notifications_settings' %}" class="profile-menu-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                                <span>Notificaciones</span>
+                            </a>
+
+                            <a href="{% url 'privacy_policy' %}" class="profile-menu-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <span>Privacidad</span>
+                            </a>
+
+                            <a href="{% url 'logout' %}" class="profile-menu-item danger">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </div>
+
+                        <div class="profile-dropdown-footer">
+                            <a href="{% url 'changelog' %}" class="version-link">Versión 1.0.5</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="page-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="{% url 'privacy_policy' %}">Política de Privacidad</a>
+                    <span class="separator">•</span>
+                    <a href="{% url 'terms_conditions' %}">Términos y Condiciones</a>
+                </div>
+                <p class="footer-copyright">© 2026 — Desarrollado por Justin Ocaña. Proyecto académico estudiantil.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="{% static 'js/toast.js' %}"></script>
+    <script src="{% static 'js/form-protection.js' %}"></script>
+    <script src="{% static 'js/dark-mode.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/internal-notifications.js' %}"></script>
+    <script src="{% static 'js/push-notifications.js' %}"></script>
+    <script src="{% static 'js/realtime-notifications.js' %}"></script>
+    <script src="{% static 'js/notification-prompt.js' %}"></script>
+    <script src="{% static 'js/confirm-modal.js' %}"></script>
+    <script src="{% static 'js/profile-menu.js' %}"></script>
+
+    <!-- PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
