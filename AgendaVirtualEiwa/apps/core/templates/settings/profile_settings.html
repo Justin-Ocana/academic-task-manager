@@ -1,0 +1,1252 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+{% load avatar_tags %}
+
+{% block title %}Configuración de Perfil - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile-settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <div class="settings-header">
+        <h1>Configuración de Perfil</h1>
+        <p>Administra tu información personal y preferencias</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 5px;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Perfil
+        </button>
+        <button class="settings-tab" data-tab="security">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 5px;">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Seguridad
+        </button>
+        <button class="settings-tab" data-tab="preferences">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 5px;">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m0-6l4.2-4.2">
+                </path>
+            </svg>
+            Preferencias
+        </button>
+    </div>
+
+    <!-- Contenido: Perfil -->
+    <div class="settings-content active" id="profile">
+        <div class="settings-card">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Información Personal
+            </h2>
+
+            <div class="profile-avatar-section">
+                <a href="{% url 'avatar_settings' %}" class="profile-avatar-large profile-avatar-button" title="Personalizar Avatar">
+                    {% render_avatar user '100px' %}
+                    <span class="avatar-edit-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </span>
+                </a>
+                <div class="profile-avatar-info">
+                    <h3>{{ user.nombre }} {{ user.apellido }}</h3>
+                    <p>{{ user.email }}</p>
+                    <a href="{% url 'avatar_settings' %}" class="btn-change-avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                        </svg>
+                        Cambiar Avatar
+                    </a>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'update_profile' %}" data-validate-form>
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="profile">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre" class="required">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" value="{{ user.nombre }}" maxlength="30"
+                            pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)?"
+                            data-validate="required|minLength:3|maxLength:30" placeholder="Ej: Juan Pablo">
+                        <span class="help-text">1-2 nombres, solo letras, 3-30 caracteres. Se capitalizará
+                            automáticamente.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="apellido" class="required">Apellido</label>
+                        <input type="text" id="apellido" name="apellido" value="{{ user.apellido }}" maxlength="30"
+                            pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ]+(\s[a-zA-ZáéíóúÁÉÍÓÚñÑ]+)?"
+                            data-validate="required|minLength:3|maxLength:30" placeholder="Ej: García López">
+                        <span class="help-text">1-2 apellidos, solo letras, 3-30 caracteres. Se capitalizará
+                            automáticamente.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="required">Email</label>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" data-validate="required|email">
+                    <span class="help-text">Tu email es usado para notificaciones y recuperación de cuenta</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width: 18px; height: 18px;">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Guardar Cambios
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="location.reload()">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contenido: Seguridad -->
+    <div class="settings-content" id="security">
+        <div class="settings-card">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Cambiar Contraseña
+            </h2>
+
+            <form method="post" action="{% url 'change_password' %}" data-validate-form>
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="password">
+
+                <div class="form-group">
+                    <label for="current_password" class="required">Contraseña Actual</label>
+                    <input type="password" id="current_password" name="current_password" data-validate="required">
+                    <span class="help-text">Ingresa tu contraseña actual para confirmar</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password" class="required">Nueva Contraseña</label>
+                    <input type="password" id="new_password" name="new_password" data-validate="required|minLength:8">
+                    <span class="help-text">Mínimo 8 caracteres</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password" class="required">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="confirm_password" name="confirm_password"
+                        data-validate="required|minLength:8">
+                    <span class="help-text">Debe coincidir con la nueva contraseña</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width: 18px; height: 18px;">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        Cambiar Contraseña
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Contenido: Preferencias -->
+    <div class="settings-content" id="preferences">
+        <div class="settings-card">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                Resumen de Actividades
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Personaliza cómo quieres ver tu resumen de actividades en el dashboard. Cada métrica se puede configurar independientemente.
+            </p>
+
+            <form id="summaryPreferencesForm" method="post" action="{% url 'update_preferences' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="summary">
+
+                <div class="summary-preference-group">
+                    <div class="summary-preference-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <div>
+                            <h3>Tareas Pendientes</h3>
+                            <p>Muestra las tareas que aún no has completado</p>
+                        </div>
+                    </div>
+                    <div class="summary-options">
+                        <label class="summary-option">
+                            <input type="radio" name="pending_range" value="today" {% if user.pending_range == 'today' %}checked{% endif %}>
+                            <span>Hoy</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="pending_range" value="week" {% if user.pending_range == 'week' %}checked{% endif %}>
+                            <span>Esta semana</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="pending_range" value="month" {% if user.pending_range == 'month' %}checked{% endif %}>
+                            <span>Este mes</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="pending_range" value="all" {% if user.pending_range == 'all' %}checked{% endif %}>
+                            <span>Todas</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="summary-preference-group">
+                    <div class="summary-preference-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <div>
+                            <h3>Tareas Completadas</h3>
+                            <p>Muestra las tareas que has marcado como completadas</p>
+                        </div>
+                    </div>
+                    <div class="summary-options">
+                        <label class="summary-option">
+                            <input type="radio" name="completed_range" value="today" {% if user.completed_range == 'today' %}checked{% endif %}>
+                            <span>Hoy</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="completed_range" value="week" {% if user.completed_range == 'week' %}checked{% endif %}>
+                            <span>Esta semana</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="completed_range" value="month" {% if user.completed_range == 'month' %}checked{% endif %}>
+                            <span>Este mes</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="completed_range" value="all" {% if user.completed_range == 'all' %}checked{% endif %}>
+                            <span>Siempre</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="summary-preference-group">
+                    <div class="summary-preference-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div>
+                            <h3>Tareas Vencidas</h3>
+                            <p>Muestra las tareas que pasaron su fecha de entrega sin completarse</p>
+                        </div>
+                    </div>
+                    <div class="summary-options">
+                        <label class="summary-option">
+                            <input type="radio" name="overdue_range" value="today" {% if user.overdue_range == 'today' %}checked{% endif %}>
+                            <span>Hoy</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="overdue_range" value="7days" {% if user.overdue_range == '7days' %}checked{% endif %}>
+                            <span>Últimos 7 días</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="overdue_range" value="30days" {% if user.overdue_range == '30days' %}checked{% endif %}>
+                            <span>Últimos 30 días</span>
+                        </label>
+                        <label class="summary-option">
+                            <input type="radio" name="overdue_range" value="all" {% if user.overdue_range == 'all' %}checked{% endif %}>
+                            <span>Todas</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Ejemplos de uso desplegables -->
+                <div class="summary-examples">
+                    <button type="button" class="summary-examples-toggle" onclick="toggleExamples()">
+                        <svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <span>Configuraciones Rápidas</span>
+                        <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    
+                    <div class="example-cards" id="exampleCards">
+                        <div class="example-card" onclick="applyPreset('organized')">
+                            <div class="example-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <div class="example-content">
+                                <div class="example-title">Estudiante Organizado</div>
+                                <div class="example-config">
+                                    <span>Pendientes: <strong>Semana</strong></span>
+                                    <span>Completadas: <strong>Semana</strong></span>
+                                    <span>Vencidas: <strong>7 días</strong></span>
+                                </div>
+                                <p>Control equilibrado de tus actividades semanales</p>
+                            </div>
+                        </div>
+                        
+                        <div class="example-card" onclick="applyPreset('daily')">
+                            <div class="example-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <div class="example-content">
+                                <div class="example-title">Enfoque Diario</div>
+                                <div class="example-config">
+                                    <span>Pendientes: <strong>Hoy</strong></span>
+                                    <span>Completadas: <strong>Hoy</strong></span>
+                                    <span>Vencidas: <strong>Hoy</strong></span>
+                                </div>
+                                <p>Menos estrés, concentración en el día actual</p>
+                            </div>
+                        </div>
+                        
+                        <div class="example-card" onclick="applyPreset('planner')">
+                            <div class="example-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div class="example-content">
+                                <div class="example-title">Planificador</div>
+                                <div class="example-config">
+                                    <span>Pendientes: <strong>Mes</strong></span>
+                                    <span>Completadas: <strong>Mes</strong></span>
+                                    <span>Vencidas: <strong>30 días</strong></span>
+                                </div>
+                                <p>Visión completa a largo plazo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Guardar Configuración
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modo Multigrupo -->
+        <div class="settings-card {% if user_groups|length < 2 %}disabled-section{% endif %}">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Visualización Multigrupo
+            </h2>
+            <p class="settings-description">
+                Elige cómo quieres ver tus tareas, calendario y resumen cuando perteneces a múltiples grupos.
+            </p>
+
+            {% if user_groups|length < 2 %}
+            <div class="feature-disabled-notice">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p><strong>Necesitas pertenecer a 2 o más grupos para usar esta función.</strong><br>
+                Actualmente estás en {{ user_groups|length }} grupo{% if user_groups|length != 1 %}s{% endif %}. Crea o únete a otro grupo para habilitar la visualización multigrupo.</p>
+            </div>
+            {% endif %}
+
+            <form id="multigroupForm" method="post" action="{% url 'update_preferences' %}" {% if user_groups|length < 2 %}style="pointer-events: none; opacity: 0.5;"{% endif %}>
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="multigroup">
+
+                <div class="multigroup-options">
+                    <label class="multigroup-option {% if user.multigroup_mode == 'separated' %}active{% endif %}">
+                        <input type="radio" name="multigroup_mode" value="separated" {% if user.multigroup_mode == 'separated' %}checked{% endif %} {% if user_groups|length < 2 %}disabled{% endif %}>
+                        <div class="option-content">
+                            <div class="option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </div>
+                            <div class="option-text">
+                                <h3>Mantener grupos separados</h3>
+                                <p>Enfócate en un grupo a la vez. El sistema recordará tu último grupo activo.</p>
+                                <ul class="option-features">
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                        </svg>
+                                        Tareas solo del grupo activo
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                        Calendario por grupo
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 3v18h18"></path>
+                                            <path d="M18 17V9"></path>
+                                            <path d="M13 17V5"></path>
+                                            <path d="M8 17v-3"></path>
+                                        </svg>
+                                        Resumen del grupo seleccionado
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="multigroup-option {% if user.multigroup_mode == 'unified' %}active{% endif %}">
+                        <input type="radio" name="multigroup_mode" value="unified" {% if user.multigroup_mode == 'unified' %}checked{% endif %} {% if user_groups|length < 2 %}disabled{% endif %}>
+                        <div class="option-content">
+                            <div class="option-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                            </div>
+                            <div class="option-text">
+                                <h3>Unificar todos los grupos</h3>
+                                <p>Ve todo junto sin perder contexto. Cada tarea muestra su grupo y color.</p>
+                                <ul class="option-features">
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                        </svg>
+                                        Lista única con todas las tareas
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                        Calendario con eventos de todos los grupos
+                                    </li>
+                                    <li>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 3v18h18"></path>
+                                            <path d="M18 17V9"></path>
+                                            <path d="M13 17V5"></path>
+                                            <path d="M8 17v-3"></path>
+                                        </svg>
+                                        Resumen global de actividades
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="multigroup-info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                    </svg>
+                    <p>Esta opción afecta tareas, calendario y resumen de actividades. Puedes cambiarla en cualquier momento.</p>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" {% if user_groups|length < 2 %}disabled{% endif %}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Guardar Modo
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Grupos del Dashboard -->
+        <div class="settings-card {% if user_groups|length < 2 %}disabled-section{% endif %}">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3v18h18"></path>
+                    <path d="M18 17V9"></path>
+                    <path d="M13 17V5"></path>
+                    <path d="M8 17v-3"></path>
+                </svg>
+                Grupos del Dashboard
+            </h2>
+            <p class="settings-description">
+                Personaliza qué grupos quieres ver en las estadísticas del dashboard. Por defecto, tu primer grupo se selecciona automáticamente. Si no seleccionas ninguno, se mostrarán todos tus grupos.
+            </p>
+
+            {% if user_groups|length < 2 %}
+            <div class="feature-disabled-notice">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <p><strong>Necesitas pertenecer a 2 o más grupos para usar esta función.</strong><br>
+                Actualmente estás en {{ user_groups|length }} grupo{% if user_groups|length != 1 %}s{% endif %}. Crea o únete a otro grupo para personalizar los grupos del dashboard.</p>
+            </div>
+            {% endif %}
+
+            <form id="dashboardGroupsForm" method="post" action="{% url 'update_preferences' %}" {% if user_groups|length < 2 %}style="pointer-events: none; opacity: 0.5;"{% endif %}>
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="dashboard_groups">
+
+                <div class="dashboard-groups-selection">
+                    {% for membership in user_groups %}
+                    <label class="dashboard-group-option">
+                        <input type="checkbox" name="dashboard_groups" value="{{ membership.group.id }}" 
+                            {% if membership.group in user.dashboard_groups.all %}checked{% endif %} {% if user_groups|length < 2 %}disabled{% endif %}>
+                        <div class="group-option-content">
+                            <div class="group-option-icon" style="background: linear-gradient(135deg, var(--azul-principal), var(--azul-secundario));">
+                                {{ membership.group.name|first }}
+                            </div>
+                            <div class="group-option-info">
+                                <h4>{{ membership.group.name }}</h4>
+                                <p>
+                                    {% if membership.role == 'leader' %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                    </svg>
+                                    Líder
+                                    {% elif membership.role == 'co_leader' %}
+                                    Co-Líder
+                                    {% else %}
+                                    Miembro
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <div class="dashboard-groups-info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                    </svg>
+                    <p><strong>¿Cómo funciona?</strong> Los grupos seleccionados se usarán para calcular las estadísticas del dashboard (tareas pendientes, completadas, vencidas). Al hacer clic en una estadística, se aplicará automáticamente el filtro de estos grupos en la vista de tareas.</p>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="selectAllGroups()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Seleccionar Todos
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="deselectAllGroups()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        Deseleccionar Todos
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Guardar Grupos
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="settings-card">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                Apariencia y Preferencias
+            </h2>
+
+            <form method="post" action="{% url 'update_preferences' %}">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="preferences">
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>Modo Oscuro</h3>
+                        <p>Cambia la apariencia de la interfaz a un tema oscuro</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="dark_mode" id="darkModeToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>Notificaciones por Email</h3>
+                        <p>Recibe notificaciones de tareas y grupos por correo</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="email_notifications">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>Notificaciones Push</h3>
+                        <p>Recibe notificaciones en tiempo real en tu navegador</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="push_notifications">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="preference-item">
+                    <div class="preference-info">
+                        <h3>Sonidos de Notificación</h3>
+                        <p>Reproduce un sonido cuando llegue una notificación</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="notification_sounds">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            style="width: 18px; height: 18px;">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Guardar Preferencias
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Zona de Peligro -->
+        <div class="settings-card">
+            <div class="danger-zone">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
+                    Zona de Peligro
+                </h3>
+                <p>Estas acciones son permanentes y no se pueden deshacer</p>
+                <button type="button" class="btn-danger" onclick="confirmDeleteAccount()">
+                    Eliminar Cuenta
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Manejo de tabs
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remover active de todos
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.settings-content').forEach(c => c.classList.remove('active'));
+
+            // Agregar active al seleccionado
+            tab.classList.add('active');
+            const tabId = tab.dataset.tab;
+            document.getElementById(tabId).classList.add('active');
+
+            // Actualizar URL hash
+            window.location.hash = tabId;
+        });
+    });
+
+    // Cargar tab desde hash
+    window.addEventListener('load', () => {
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+            const tab = document.querySelector(`[data-tab="${hash}"]`);
+            if (tab) {
+                tab.click();
+            }
+        }
+    });
+
+    // Toggle ejemplos
+    function toggleExamples() {
+        const examples = document.getElementById('exampleCards');
+        const toggle = document.querySelector('.summary-examples-toggle');
+        const isOpen = examples.classList.contains('open');
+        
+        if (isOpen) {
+            examples.classList.remove('open');
+            toggle.classList.remove('open');
+        } else {
+            examples.classList.add('open');
+            toggle.classList.add('open');
+        }
+    }
+
+    // Manejo de opciones multigrupo
+    document.querySelectorAll('.multigroup-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remover active de todas las opciones
+            document.querySelectorAll('.multigroup-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            // Agregar active a la opción seleccionada
+            this.classList.add('active');
+            
+            // Marcar el radio button
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+            }
+        });
+    });
+
+    // Aplicar preset de configuración
+    function applyPreset(preset) {
+        const presets = {
+            organized: {
+                pending_range: 'week',
+                completed_range: 'week',
+                overdue_range: '7days'
+            },
+            daily: {
+                pending_range: 'today',
+                completed_range: 'today',
+                overdue_range: 'today'
+            },
+            planner: {
+                pending_range: 'month',
+                completed_range: 'month',
+                overdue_range: '30days'
+            }
+        };
+
+        const config = presets[preset];
+        if (!config) return;
+
+        // Aplicar valores a los radio buttons
+        document.querySelector(`input[name="pending_range"][value="${config.pending_range}"]`).checked = true;
+        document.querySelector(`input[name="completed_range"][value="${config.completed_range}"]`).checked = true;
+        document.querySelector(`input[name="overdue_range"][value="${config.overdue_range}"]`).checked = true;
+
+        // Mostrar feedback visual
+        showToast('Configuración aplicada. Haz clic en "Guardar" para confirmar.', 'info');
+    }
+
+    // Validar que las contraseñas coincidan
+    document.querySelector('form[action*="change_password"]')?.addEventListener('submit', (e) => {
+        const newPassword = document.getElementById('new_password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+
+        if (newPassword !== confirmPassword) {
+            e.preventDefault();
+            showToast('Las contraseñas no coinciden', 'error');
+            document.getElementById('confirm_password').classList.add('is-invalid');
+        }
+    });
+
+    // Confirmar eliminación de cuenta
+    async function confirmDeleteAccount() {
+        const confirmed = await showConfirm({
+            title: '⚠️ Eliminar tu cuenta',
+            message: 'Esta acción es PERMANENTE y no se puede deshacer.\n\nSe eliminarán:\n• Todos tus datos personales\n• Todas tus tareas\n• Todos tus grupos\n• Todo tu historial\n\n¿Estás absolutamente seguro?',
+            confirmText: 'Sí, eliminar mi cuenta',
+            cancelText: 'Cancelar',
+            type: 'danger'
+        });
+
+        if (confirmed) {
+            showDeleteAccountModal();
+        }
+    }
+
+    function showDeleteAccountModal() {
+        const modal = document.createElement('div');
+        modal.className = 'delete-account-modal';
+        modal.innerHTML = `
+            <div class="delete-modal-overlay"></div>
+            <div class="delete-modal-content">
+                <div class="delete-modal-header">
+                    <div class="delete-icon-danger">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <h2>Confirmar Eliminación de Cuenta</h2>
+                </div>
+                
+                <div class="delete-modal-body">
+                    <div class="warning-box">
+                        <strong> ADVERTENCIA: Esta acción es irreversible</strong>
+                    </div>
+                    
+                    <div class="consequences-list">
+                        <p class="consequences-title">Al eliminar tu cuenta se perderá:</p>
+                        <ul>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Todos tus datos personales
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Todas tus tareas creadas
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Todos los grupos donde eres líder
+                            </li>
+                            <li>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Todo tu historial de actividad
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="confirmation-input-section">
+                        <label for="confirmEmail">Para confirmar, escribe tu email:</label>
+                        <input type="email" id="confirmEmail" class="confirm-input" placeholder="{{ user.email }}" autocomplete="off">
+                        <span class="input-hint">Debe coincidir exactamente con tu email</span>
+                    </div>
+                </div>
+                
+                <div class="delete-modal-footer">
+                    <button class="btn-modal-cancel" onclick="closeDeleteAccountModal()">
+                        Cancelar
+                    </button>
+                    <button class="btn-modal-delete" onclick="validateAndDeleteAccount()" disabled>
+                        Eliminar Cuenta Permanentemente
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+
+        const input = document.getElementById('confirmEmail');
+        const deleteBtn = modal.querySelector('.btn-modal-delete');
+
+        input.addEventListener('input', function () {
+            if (this.value === '{{ user.email }}') {
+                deleteBtn.disabled = false;
+                deleteBtn.classList.add('enabled');
+            } else {
+                deleteBtn.disabled = true;
+                deleteBtn.classList.remove('enabled');
+            }
+        });
+
+        setTimeout(() => input.focus(), 300);
+    }
+
+    function closeDeleteAccountModal() {
+        const modal = document.querySelector('.delete-account-modal');
+        if (modal) {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        }
+    }
+
+    function validateAndDeleteAccount() {
+        const input = document.getElementById('confirmEmail');
+        if (input.value === '{{ user.email }}') {
+            closeDeleteAccountModal();
+            deleteAccount();
+        } else {
+            showToast('El email no coincide', 'error');
+            input.classList.add('error-shake');
+            setTimeout(() => input.classList.remove('error-shake'), 500);
+        }
+    }
+
+    async function deleteAccount() {
+        try {
+            const response = await fetch('{% url "delete_account" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('Cuenta eliminada exitosamente', 'success');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+            } else {
+                showToast(data.error || 'Error al eliminar la cuenta', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Error al eliminar la cuenta', 'error');
+        }
+    }
+
+    // Auto-guardar preferencias
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            if (!this.disabled) {
+                const checkboxName = this.name;
+
+                // Permitir cambiar el modo oscuro y los grupos del dashboard
+                if (checkboxName === 'dark_mode' || checkboxName === 'dashboard_groups') {
+                    // Estos se manejan con sus propios handlers
+                    return;
+                }
+
+                // Para las demás opciones, mostrar mensaje y desactivar
+                this.checked = false;
+                showToast('Esta función está en desarrollo', 'info', 3000);
+            }
+        });
+    });
+
+    // Configurar el toggle de modo oscuro
+    window.addEventListener('load', () => {
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle && typeof DarkMode !== 'undefined') {
+            // Establecer el estado inicial del toggle
+            darkModeToggle.checked = DarkMode.isDark();
+
+            // Escuchar cambios en el toggle
+            darkModeToggle.addEventListener('change', function () {
+                const newTheme = this.checked ? 'dark' : 'light';
+
+                // Si está activando el modo oscuro, mostrar advertencia SIEMPRE
+                if (newTheme === 'dark') {
+                    showDarkModeWarning(this);
+                } else {
+                    DarkMode.setTheme(newTheme);
+                }
+            });
+
+            // Escuchar cambios de tema desde otras fuentes
+            window.addEventListener('themeChanged', (event) => {
+                darkModeToggle.checked = event.detail.theme === 'dark';
+            });
+        }
+    });
+
+    // Modal de advertencia de modo oscuro
+    function showDarkModeWarning(toggle) {
+        // Crear el modal
+        const modal = document.createElement('div');
+        modal.className = 'dark-mode-warning-modal';
+        modal.innerHTML = `
+            <div class="dark-mode-warning-overlay"></div>
+            <div class="dark-mode-warning-content">
+                <div class="warning-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h2>Modo Oscuro Experimental</h2>
+                <p>El modo oscuro está actualmente en fase experimental. Algunos elementos visuales pueden no verse de forma óptima.</p>
+                <p><strong>Estamos trabajando constantemente para mejorar la experiencia.</strong></p>
+                <div class="warning-note">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>Puedes desactivarlo en cualquier momento desde esta misma configuración.</span>
+                </div>
+                <div class="warning-actions">
+                    <button class="btn-warning-cancel" onclick="cancelDarkMode(this)">
+                        Cancelar
+                    </button>
+                    <button class="btn-warning-accept" onclick="acceptDarkMode(this)">
+                        Entendido, activar
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Animar entrada
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+
+        // Guardar referencia al toggle
+        modal.dataset.toggleId = 'darkModeToggle';
+    }
+
+    function cancelDarkMode(button) {
+        const modal = button.closest('.dark-mode-warning-modal');
+        const toggle = document.getElementById(modal.dataset.toggleId);
+
+        // Desmarcar el toggle
+        if (toggle) {
+            toggle.checked = false;
+        }
+
+        // Cerrar modal
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+
+    function acceptDarkMode(button) {
+        const modal = button.closest('.dark-mode-warning-modal');
+        const toggle = document.getElementById(modal.dataset.toggleId);
+
+        // Activar modo oscuro
+        if (typeof DarkMode !== 'undefined') {
+            DarkMode.setTheme('dark');
+        }
+
+        // Cerrar modal
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+
+    // ============================================
+    // RESUMEN DE ACTIVIDADES - FUNCIONALIDAD
+    // ============================================
+
+    // Toggle ejemplos desplegables
+    function toggleExamples() {
+        const examples = document.getElementById('exampleCards');
+        const toggle = document.querySelector('.summary-examples-toggle');
+        const isOpen = examples.classList.contains('open');
+        
+        if (isOpen) {
+            examples.classList.remove('open');
+            toggle.classList.remove('open');
+        } else {
+            examples.classList.add('open');
+            toggle.classList.add('open');
+        }
+    }
+
+    // Aplicar preset de configuración
+    function applyPreset(preset) {
+        const presets = {
+            organized: {
+                pending_range: 'week',
+                completed_range: 'week',
+                overdue_range: '7days'
+            },
+            daily: {
+                pending_range: 'today',
+                completed_range: 'today',
+                overdue_range: 'today'
+            },
+            planner: {
+                pending_range: 'month',
+                completed_range: 'month',
+                overdue_range: '30days'
+            }
+        };
+
+        const config = presets[preset];
+        if (!config) return;
+
+        // Aplicar valores a los radio buttons
+        document.querySelector(`input[name="pending_range"][value="${config.pending_range}"]`).checked = true;
+        document.querySelector(`input[name="completed_range"][value="${config.completed_range}"]`).checked = true;
+        document.querySelector(`input[name="overdue_range"][value="${config.overdue_range}"]`).checked = true;
+
+        // Mostrar feedback visual
+        if (typeof showToast !== 'undefined') {
+            showToast('Configuración aplicada. Haz clic en "Guardar" para confirmar.', 'info');
+        }
+    }
+
+    // Guardar preferencias con AJAX (optimizado)
+    window.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('summaryPreferencesForm');
+        if (!form) return;
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const button = this.querySelector('button[type="submit"]');
+            const originalHTML = button.innerHTML;
+            
+            // Deshabilitar botón y mostrar loading
+            button.disabled = true;
+            button.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; animation: spin 1s linear infinite;">
+                    <path d="M21 12a9 9 0 11-6.219-8.56"></path>
+                </svg>
+                Guardando...
+            `;
+            
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Restaurar botón inmediatamente
+                    button.disabled = false;
+                    button.innerHTML = originalHTML;
+                    
+                    // Mostrar mensaje de éxito
+                    if (typeof showToast !== 'undefined') {
+                        showToast('Configuración guardada exitosamente', 'success');
+                    }
+                } else {
+                    throw new Error(data.error || 'Error al guardar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // Restaurar botón en caso de error
+                button.disabled = false;
+                button.innerHTML = originalHTML;
+                
+                // Mostrar mensaje de error
+                if (typeof showToast !== 'undefined') {
+                    showToast('Error al guardar la configuración', 'error');
+                }
+            }
+        });
+    });
+
+    // ============================================
+    // GRUPOS DEL DASHBOARD - FUNCIONALIDAD
+    // ============================================
+    function selectAllGroups() {
+        document.querySelectorAll('input[name="dashboard_groups"]').forEach(checkbox => {
+            checkbox.checked = true;
+            checkbox.closest('.dashboard-group-option').classList.add('selected');
+        });
+    }
+
+    function deselectAllGroups() {
+        document.querySelectorAll('input[name="dashboard_groups"]').forEach(checkbox => {
+            checkbox.checked = false;
+            checkbox.closest('.dashboard-group-option').classList.remove('selected');
+        });
+    }
+
+    // Actualizar clase visual al cambiar checkbox
+    document.querySelectorAll('input[name="dashboard_groups"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                this.closest('.dashboard-group-option').classList.add('selected');
+            } else {
+                this.closest('.dashboard-group-option').classList.remove('selected');
+            }
+        });
+        
+        // Inicializar estado visual
+        if (checkbox.checked) {
+            checkbox.closest('.dashboard-group-option').classList.add('selected');
+        }
+    });
+
+    // Guardar grupos del dashboard
+    document.getElementById('dashboardGroupsForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        try {
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showToast('Grupos del dashboard actualizados correctamente', 'success');
+            } else {
+                showToast(data.message || 'Error al guardar los grupos', 'error');
+            }
+        } catch (error) {
+            showToast('Error al guardar la configuración', 'error');
+        }
+    });
+</script>
+{% endblock %}

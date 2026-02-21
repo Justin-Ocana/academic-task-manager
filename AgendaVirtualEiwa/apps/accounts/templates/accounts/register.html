@@ -1,0 +1,64 @@
+{% extends 'Index/base.html' %}
+{% load static %}
+
+{% block title %}Crear Cuenta - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card register-card">
+        <h2 class="auth-title">Crear Cuenta</h2>
+        <p class="auth-subtitle">Únete a Agenda Virtual Eiwa</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Nombres</label>
+                    {{ form.nombre }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Apellidos</label>
+                    {{ form.apellido }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Correo Electrónico</label>
+                {{ form.email }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                {{ form.password1 }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Confirmar Contraseña</label>
+                {{ form.password2 }}
+            </div>
+
+            {% if form.errors %}
+            <div class="alert alert-error">
+                {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary btn-submit">Crear Cuenta</button>
+
+            <div class="auth-link">
+                ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia Sesión</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

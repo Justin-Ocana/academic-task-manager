@@ -1,0 +1,668 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Registro de Cambios - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .changelog-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .changelog-header {
+        margin-bottom: 40px;
+    }
+
+    .changelog-header h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.5rem;
+        color: var(--azul-principal);
+        margin-bottom: 10px;
+    }
+
+    .changelog-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .version-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .version-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--gris-suave);
+    }
+
+    .version-number {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2rem;
+        color: var(--azul-principal);
+    }
+
+    .version-date {
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    .version-badge {
+        padding: 4px 12px;
+        background: linear-gradient(135deg, var(--azul-pastel), var(--azul-secundario));
+        color: white;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .version-badge-name {
+        padding: 4px 12px;
+        background: linear-gradient(135deg, var(--naranja-pastel), var(--naranja-eiwa));
+        color: white;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .changes-category {
+        margin-bottom: 25px;
+    }
+
+    .category-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        color: var(--azul-principal);
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+    }
+
+    .category-title svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .category-title.new {
+        color: #4caf50;
+    }
+
+    .category-title.improved {
+        color: #2196f3;
+    }
+
+    .category-title.fixed {
+        color: #ff9800;
+    }
+
+    .changes-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .changes-list li {
+        padding: 10px 0 10px 30px;
+        position: relative;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .changes-list li:before {
+        content: "•";
+        position: absolute;
+        left: 10px;
+        color: var(--azul-pastel);
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .important-note {
+        background: linear-gradient(135deg, #fff3cd 0%, #fff8e1 100%);
+        border-left: 4px solid #ffc107;
+        border-radius: 12px;
+        padding: 20px 25px;
+        margin: 30px 0;
+        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+    }
+
+    .important-note h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #f57c00;
+        margin: 0 0 12px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .important-note h3 svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .important-note p {
+        color: #856404;
+        margin: 0;
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .changelog-header h1 {
+            font-size: 2rem;
+        }
+
+        .version-section {
+            padding: 20px;
+        }
+
+        .version-number {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="changelog-container">
+    <div class="changelog-header">
+        <h1>Registro de Cambios</h1>
+        <p>Historial de actualizaciones y mejoras de la plataforma</p>
+    </div>
+
+    <!-- Versión 1.0.5 - Personalización Total -->
+    <div class="version-section">
+        <div class="version-header">
+            <span class="version-number">v1.0.5</span>
+            <span class="version-badge">ACTUAL</span>
+            <span class="version-badge-name">Personalización Total</span>
+            <span class="version-date">6 de Febrero, 2026</span>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Sistema de Avatares Personalizables
+            </h3>
+            <ul class="changes-list">
+                <li><strong>71 Avatares Únicos:</strong> Elige entre 3 categorías (Eiwa: 40 diseños abstractos, Animales: 22 adorables criaturas, Disney: 9 princesas mágicas)</li>
+                <li><strong>Personalización Completa:</strong> Cambia el color de fondo de tu avatar con una paleta de 12 colores vibrantes</li>
+                <li><strong>Vista Previa en Tiempo Real:</strong> Ve cómo se verá tu avatar antes de guardarlo</li>
+                <li><strong>Interfaz Intuitiva:</strong> Navegación por categorías con diseño tipo galería</li>
+                <li><strong>Avatares SVG:</strong> Gráficos vectoriales que se ven perfectos en cualquier tamaño</li>
+                <li><strong>Visible en Toda la Plataforma:</strong> Tu avatar aparece en el menú de perfil, solicitudes, comentarios y más</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Sistema de Documentos Adjuntos (Experimental)
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Subida de Archivos:</strong> Adjunta documentos PDF, Word, Excel, PowerPoint y TXT a las tareas (máx. 10 MB por archivo)</li>
+                <li><strong>3 Niveles de Permisos:</strong> Todos pueden subir, Solo líder, o Con aprobación del líder</li>
+                <li><strong>Validación de Seguridad:</strong> Bloqueo automático de archivos peligrosos (.exe, .bat, .sh, etc.)</li>
+                <li><strong>Gestión Completa:</strong> Descarga, visualiza y elimina documentos desde el detalle de la tarea</li>
+                <li><strong>Sistema de Aprobación:</strong> Los líderes pueden aprobar o rechazar documentos pendientes</li>
+                <li><strong>Limpieza Automática:</strong> Comando para eliminar archivos de tareas archivadas y liberar espacio</li>
+                <li><strong>Indicador Inteligente:</strong> Aviso dinámico que aparece solo cuando adjuntas archivos, indicando si la tarea irá a solicitud</li>
+                <li><strong>Advertencia Experimental:</strong> Mensaje claro al activar la función indicando que está en fase de prueba</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Visualización Multigrupo
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Dos Modos de Visualización:</strong> Elige entre mantener grupos separados o unificar todo en una vista</li>
+                <li><strong>Modo Separado:</strong> Enfócate en un grupo a la vez, el sistema recuerda tu último grupo activo</li>
+                <li><strong>Modo Unificado:</strong> Ve todas las tareas, calendario y resumen de todos tus grupos juntos</li>
+                <li><strong>Filtros Avanzados:</strong> En modo unificado, filtra por uno o múltiples grupos específicos</li>
+                <li><strong>Configuración Flexible:</strong> Cambia entre modos en cualquier momento desde Configuración → Preferencias</li>
+                <li><strong>Grupos del Dashboard:</strong> Personaliza qué grupos quieres ver en las estadísticas del dashboard</li>
+                <li><strong>Filtros Automáticos:</strong> Al hacer clic en una estadística, se aplica automáticamente el filtro de tus grupos seleccionados</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title improved">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                Mejoras en Solicitudes
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Información de Tarea Visible:</strong> Las solicitudes de edición sin cambios de texto ahora muestran la información completa de la tarea (materia, descripción, fecha)</li>
+                <li><strong>Diseño Profesional:</strong> Tarjetas con iconos, grid responsive y diseño limpio para mostrar la información</li>
+                <li><strong>Cambios en Documentos:</strong> Visualización clara de documentos a agregar y eliminar en solicitudes de edición</li>
+                <li><strong>Contexto Completo:</strong> El líder siempre sabe de qué tarea se trata, incluso si solo se modifican documentos</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title improved">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                Mejoras de UX
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Drag & Drop:</strong> Arrastra archivos directamente al área de subida</li>
+                <li><strong>Vista Previa de Archivos:</strong> Ve los archivos seleccionados antes de enviar el formulario</li>
+                <li><strong>Iconos por Tipo:</strong> Cada tipo de archivo tiene su propio icono distintivo</li>
+                <li><strong>Tamaño Legible:</strong> Los tamaños de archivo se muestran en formato amigable (KB, MB)</li>
+                <li><strong>Confirmaciones Inteligentes:</strong> Modales personalizados para confirmar acciones importantes</li>
+                <li><strong>Animaciones Suaves:</strong> Transiciones fluidas en toda la interfaz</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title fixed">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Correcciones y Optimizaciones
+            </h3>
+            <ul class="changes-list">
+                <li>Corregido problema donde tareas sin cambios de texto no mostraban información en solicitudes</li>
+                <li>Optimizado sistema de tracking para registrar cambios en documentos</li>
+                <li>Mejorado rendimiento de consultas en vista unificada de tareas</li>
+                <li>Corregido bug donde el indicador de documentos no desaparecía al eliminar todos los archivos</li>
+                <li>Mejorada validación de tipos de archivo en frontend y backend</li>
+                <li>Optimizado almacenamiento de archivos con estructura de carpetas por grupo y tarea</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title" style="color: #9c27b0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                Agradecimientos Especiales
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Careli Samaniego</strong> - Por ser una excelente beta tester de la versión anterior y ser la primera de ciencias en probar la plataforma</li>
+                <li><strong>Isabel Velasco</strong> - Por la idea de las fotos de perfil personalizables que dio origen al sistema completo de avatares</li>
+            </ul>
+        </div>
+
+        <!-- Nota Importante -->
+        <div class="important-note">
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                Funciones Experimentales
+            </h3>
+            <p>
+                <strong>Sistema de Documentos:</strong> Esta función está en fase de prueba y puede presentar pequeños errores. Estamos trabajando continuamente para mejorarla. 
+                <strong>Multigrupos:</strong> Recomendamos estar en un solo grupo para una experiencia óptima. La función multigrupo está disponible pero puede tener comportamientos inesperados.
+            </p>
+        </div>
+    </div>
+
+    <!-- Versión 1.0.4 - Pulido Visual -->
+    <div class="version-section">
+        <div class="version-header">
+            <span class="version-number">v1.0.4</span>
+            <span class="version-badge-name">Pulido Visual</span>
+            <span class="version-date">4 de Febrero, 2026</span>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title fixed">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Correcciones en Modo Oscuro
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Colores de Materias Visibles:</strong> Ahora el encabezado de las tareas muestra correctamente el color de la materia en modo oscuro (antes se veía todo gris)</li>
+                <li><strong>Botón Editar Arreglado:</strong> El botón de editar ahora tiene su color azul en modo oscuro</li>
+                <li><strong>Tareas Archivadas:</strong> Corregido el aviso de "Tarea archivada" que se veía con un icono gigante</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Páginas de Error Personalizadas
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Página 404:</strong> Cuando visites una página que no existe, verás un diseño bonito en lugar de un error feo</li>
+                <li><strong>Página 403:</strong> Si intentas acceder a algo sin permiso, verás un mensaje claro y amigable</li>
+                <li><strong>Página 500:</strong> Si algo falla en el servidor, verás una página de error con el estilo de la plataforma</li>
+                <li><strong>Modo Claro y Oscuro:</strong> Todas las páginas de error se adaptan automáticamente a tu tema preferido</li>
+                <li><strong>Botones Útiles:</strong> Cada página de error tiene botones para volver al inicio o regresar</li>
+            </ul>
+        </div>
+
+        <!-- Nota Importante -->
+        <div class="important-note">
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+                En Constante Mejora
+            </h3>
+            <p>
+                Esta plataforma está en desarrollo activo y puede contener algunos fallos ocasionales. Trabajamos continuamente en nuevas funcionalidades y optimizaciones. 
+                ¡Gracias por ser parte de esta evolución!
+            </p>
+        </div>
+    </div>
+
+    <!-- Versión 1.0.3 - Dashboard Interactivo -->
+    <div class="version-section">
+        <div class="version-header">
+            <span class="version-number">v1.0.3</span>
+            <span class="version-badge-name">Dashboard Interactivo</span>
+            <span class="version-date">3 de Febrero, 2026</span>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Nuevas Funcionalidades
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Dashboard Interactivo:</strong> Las tarjetas de estadísticas ahora son clicables y te llevan directamente a las tareas filtradas según tu configuración</li>
+                <li><strong>Resumen de Actividades Personalizable:</strong> Configura cómo quieres ver tus estadísticas en el dashboard desde Configuración → Preferencias. Elige entre ver tareas de hoy, esta semana, este mes o todas</li>
+                <li><strong>Indicadores de Rango:</strong> Cada tarjeta muestra un badge que indica el período configurado (Hoy, Esta semana, Este mes, Todas)</li>
+                <li><strong>Sistema de Tareas Archivadas:</strong> Las tareas con más de 30 días de antigüedad se archivan automáticamente y ya no pueden completarse</li>
+                <li><strong>Confirmación de Fechas Pasadas:</strong> Al crear una tarea con fecha de entrega anterior a hoy, el sistema te pide confirmación para evitar errores</li>
+                <li><strong>Filtro de Tareas Archivadas:</strong> Nueva opción en el filtro de estado para ver tareas archivadas por separado</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title improved">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                Mejoras de Experiencia
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Feedback Visual:</strong> Las tarjetas del dashboard tienen efecto hover con elevación y sombra para indicar que son clicables</li>
+                <li><strong>Badges Adaptativos:</strong> Los indicadores de rango se ajustan automáticamente a diferentes tamaños de pantalla</li>
+                <li><strong>Vista de Tareas Optimizada:</strong> Por defecto solo se muestran tareas activas (pendientes y próximas), las archivadas están en su propio filtro</li>
+                <li><strong>Botones de Detalle Rediseñados:</strong> Botón "Completar" con gradiente verde, "Editar" en azul, y "Eliminar" como círculo en PC</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title fixed">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Mejoras de Usabilidad
+            </h3>
+            <ul class="changes-list">
+                <li>Títulos de secciones en detalle de tarea ahora usan fuente Bebas Neue para mejor jerarquía visual</li>
+                <li>Descripción de tareas con mejor formato y espaciado para facilitar la lectura</li>
+                <li>Layout de botones optimizado: en PC están en línea horizontal, en móvil apilados verticalmente</li>
+                <li>Tareas archivadas ya no aparecen mezcladas con las activas, evitando confusión</li>
+                <li>Mensaje claro cuando intentas completar una tarea archivada</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title" style="color: #9c27b0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                Agradecimientos Especiales
+            </h3>
+            <ul class="changes-list">
+                <li><strong>María Bayas</strong> - Por su invaluable ayuda como beta tester y por proporcionar feedback detallado que ayudó a mejorar la experiencia de usuario de la plataforma</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Versión 1.0.2 - Estabilidad -->
+    <div class="version-section">
+        <div class="version-header">
+            <span class="version-number">v1.0.2</span>
+            <span class="version-badge-name">Estabilidad</span>
+            <span class="version-date">1 de Febrero, 2026</span>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title fixed">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Correcciones de Bugs
+            </h3>
+            <ul class="changes-list">
+                <li>Corregido z-index de dropdown de acciones de miembros que quedaba tapado</li>
+                <li>Corregido problema de botones que quedaban en estado "enviando" al cancelar</li>
+                <li>Corregidos bordes blancos y colores inconsistentes en modo oscuro</li>
+                <li>Corregida restauración de iconos SVG en botones al cancelar acciones</li>
+                <li>Prevención de nombres trolls (aaaaaaa, XxDarkLordxX, etc.)</li>
+                <li>Flash blanco parcialmente reducido en modo oscuro (mejoras pendientes)</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title improved">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                Mejoras Generales
+            </h3>
+            <ul class="changes-list">
+                <li>Optimización de 25+ componentes para modo oscuro</li>
+                <li>Sistema de validación robusto en 3 capas (Frontend, Forms, Models)</li>
+                <li>Límites realistas para nombres (2-20 caracteres) y materias (2-40 caracteres)</li>
+                <li>Z-index optimizado para mejor apilamiento de elementos</li>
+                <li>Protección mejorada contra múltiples envíos de formularios</li>
+                <li>Animaciones y transiciones más suaves</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Nuevas Funcionalidades
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Función de Eliminar Cuenta:</strong> Sistema completo con modal personalizado (no envía
+                    email por ahora)</li>
+                <li><strong>Modo Oscuro:</strong> Implementado en toda la aplicación (ajustes de colores pendientes)
+                </li>
+                <li><strong>Validadores Anti-Troll:</strong> Prevención de nombres y materias inapropiados</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title" style="color: #9c27b0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                Agradecimientos Especiales
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Isabel Velasco</strong> - Por dar su opinión y feedback, y por encontrar varios errores que fueron corregidos en esta versión</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Versión 1.0.1 - Moderación Inteligente -->
+    <div class="version-section">
+        <div class="version-header">
+            <span class="version-number">v1.0.1</span>
+            <span class="version-badge-name">Moderación Inteligente</span>
+            <span class="version-date">10 de Diciembre, 2025</span>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Nuevas Funcionalidades
+            </h3>
+            <ul class="changes-list">
+                <li>Sistema de moderación de contenido inteligente estilo Roblox</li>
+                <li>Detección automática de palabras inapropiadas y sus variaciones (leet speak, espacios, etc.)</li>
+                <li>3 modos de moderación configurables por grupo: Desactivada, Censurar (###), Bloquear</li>
+                <li>Configuración de moderación en ajustes del grupo</li>
+                <li>Indicador de carga de trabajo semanal en el calendario</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title improved">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                Mejoras
+            </h3>
+            <ul class="changes-list">
+                <li>Rediseño de las tarjetas de información del grupo con diseño más compacto</li>
+                <li>Mejora en la visualización de estadísticas del grupo (miembros, líderes, tipo de ingreso, fecha de
+                    creación)</li>
+                <li>Actividad reciente del grupo movida a su propia pestaña</li>
+                <li>Mejor organización de la sección de moderación en configuración del grupo</li>
+                <li>Estilos mejorados para las tarjetas de estadísticas con animaciones suaves</li>
+                <li>Indicador de carga semanal ahora muestra solo la semana actual/visible</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title fixed">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Correcciones
+            </h3>
+            <ul class="changes-list">
+                <li>Corregido problema donde la actividad reciente no mostraba el título de las tareas</li>
+                <li>Corregido error de sintaxis en templates de Django</li>
+                <li>Corregido problema con el filtro timesince en actividad reciente</li>
+                <li>Corregido cálculo de carga de trabajo que mostraba múltiples semanas</li>
+                <li>Mejorada la aplicación de censura en creación y edición de tareas</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Versión 1.0.0 - Génesis -->
+    <div class="version-section">
+        <div class="version-header">
+            <span class="version-number">v1.0.0</span>
+            <span class="version-badge-name">Génesis</span>
+            <span class="version-date">Lanzamiento Inicial</span>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title new">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Funcionalidades Iniciales
+            </h3>
+            <ul class="changes-list">
+                <li>Sistema de gestión de tareas colaborativas</li>
+                <li>Calendario integrado con visualización mensual y semanal</li>
+                <li>Grupos de estudio con roles (Líder, Co-líder, Miembro)</li>
+                <li>Sistema de materias personalizables</li>
+                <li>Notificaciones en tiempo real</li>
+                <li>Sistema de solicitudes y aprobaciones</li>
+                <li>Modo oscuro</li>
+                <li>Diseño responsive para móviles</li>
+                <li>PWA (Progressive Web App)</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title" style="color: #9c27b0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                Agradecimientos Especiales
+            </h3>
+            <ul class="changes-list">
+                <li><strong>Axel Avecilla</strong> - Por ser uno de los primeros en probar la plataforma, dar su opinión y proporcionar buen feedback desde el inicio</li>
+            </ul>
+        </div>
+
+        <div class="changes-category">
+            <h3 class="category-title" style="color: #ff9800;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+                Nota de Moderación
+            </h3>
+            <ul class="changes-list">
+                <li>Durante las primeras versiones se detectaron usos indebidos del sistema, lo que permitió mejorar y fortalecer los mecanismos de moderación de contenido</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{
+    "name": "Agenda Virtual EIWA",
+    "short_name": "EIWA",
+    "description": "Plataforma colaborativa para gestionar tareas, grupos de estudio y calendarios académicos",
+    "start_url": "/dashboard/",
+    "display": "standalone",
+    "background_color": "#213E89",
+    "theme_color": "#213E89",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/static/img/EIWALOGOMOBILE.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/img/logoeiwa.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": [
+        "education",
+        "productivity"
+    ],
+    "lang": "es-MX",
+    "dir": "ltr",
+    "scope": "/",
+    "prefer_related_applications": false
+}

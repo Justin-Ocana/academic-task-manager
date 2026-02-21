@@ -1,0 +1,333 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Virtual Eiwa</title>
+    <link rel="icon" type="image/png" href="{% static 'img/logoeiwa.png' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header class="header header-fixed">
+        <div class="container">
+            <div class="header-content">
+                <a href="{% url 'index' %}" class="header-logo-link">
+                    <img src="{% static 'img/logoeiwa.png' %}" alt="Logo EIWA" class="header-logo">
+                </a>
+                <a href="{% url 'index' %}" class="logo-link">
+                    <h1 class="logo">AGENDA VIRTUAL EIWA</h1>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">Plataforma Académica Colaborativa</span>
+            <h2 class="hero-title">Organiza tu día con estilo</h2>
+            <p class="hero-subtitle">La herramienta perfecta para gestionar tus tareas, eventos y proyectos académicos en un solo lugar. Colabora con tu equipo y mantén todo bajo control.</p>
+            <div class="hero-decoration"></div>
+            <div class="hero-buttons">
+                <a href="{% url 'register' %}" class="btn-hero btn-hero-primary" style="text-decoration: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8zM16 11h6M19 8v6"/>
+                    </svg>
+                    Crear Cuenta Gratis
+                </a>
+                <a href="{% url 'login' %}" class="btn-hero btn-hero-secondary" style="text-decoration: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                    </svg>
+                    Iniciar Sesión
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Gratis</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">Funciones</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Disponible</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Video Demo Principal -->
+    <section class="video-demo-main">
+        <div class="container">
+            <div class="main-video-container">
+                <video class="main-demo-video" autoplay loop muted playsinline preload="metadata">
+                    <source src="{% static 'videos/demo.mp4' %}" type="video/mp4">
+                    Tu navegador no soporta el elemento de video.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <section class="welcome">
+        <div class="container">
+            <h3 class="welcome-title">Tu espacio de productividad académica</h3>
+            <p class="welcome-text">
+                Agenda Virtual Eiwa es una plataforma diseñada específicamente para estudiantes y equipos académicos. 
+                Gestiona tus tareas, coordina con tu grupo, visualiza deadlines en el calendario y mantén todo organizado en un solo lugar.
+            </p>
+            <div class="welcome-features">
+                <div class="welcome-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span>100% Seguro</span>
+                </div>
+                <div class="welcome-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                    <span>Rápido y Eficiente</span>
+                </div>
+                <div class="welcome-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM12 6v6l4 2"/>
+                    </svg>
+                    <span>Disponible 24/7</span>
+                </div>
+                <div class="welcome-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
+                    <span>Colaborativo</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Características con Videos -->
+    <section class="features">
+        <div class="container">
+            <h3 class="features-title">Características principales</h3>
+            <p class="features-subtitle">Todo lo que necesitas para organizarte mejor</p>
+            
+            <div class="features-grid">
+                <!-- Feature 1: Gestión de Tareas -->
+                <div class="feature-card">
+                    <div class="feature-video-container">
+                        <video class="feature-video" loop muted playsinline preload="none" data-lazy-video>
+                            <source data-src="{% static 'videos/Tareas.mp4' %}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                        </div>
+                        <h4 class="feature-title">Gestión de Tareas</h4>
+                        <p class="feature-description">Crea, organiza y completa tareas de forma colaborativa. Sistema de solicitudes, estados personalizados y seguimiento completo.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2: Calendario -->
+                <div class="feature-card">
+                    <div class="feature-video-container">
+                        <video class="feature-video" loop muted playsinline preload="none" data-lazy-video>
+                            <source data-src="{% static 'videos/Calendario.mp4' %}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                        </div>
+                        <h4 class="feature-title">Calendario Inteligente</h4>
+                        <p class="feature-description">Visualiza todas tus fechas de entrega en un calendario interactivo. Filtra por materia, grupo o estado.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 3: Grupos Colaborativos -->
+                <div class="feature-card">
+                    <div class="feature-video-container">
+                        <video class="feature-video" loop muted playsinline preload="none" data-lazy-video>
+                            <source data-src="{% static 'videos/Grupos.mp4' %}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="feature-content">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75M9 11a4 4 0 100-8 4 4 0 000 8z"/>
+                            </svg>
+                        </div>
+                        <h4 class="feature-title">Grupos Colaborativos</h4>
+                        <p class="feature-description">Trabaja en equipo con roles definidos, permisos personalizables y sistema de moderación integrado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Funcionalidades Adicionales -->
+    <section class="additional-features">
+        <div class="container">
+            <h3 class="section-title">Más funcionalidades para ti</h3>
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="feature-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-item-content">
+                        <h4>Sistema de Solicitudes</h4>
+                        <p>Solicita crear o editar tareas. Los líderes aprueban o rechazan cambios.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 106 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+                        </svg>
+                    </div>
+                    <div class="feature-item-content">
+                        <h4>Notificaciones en Tiempo Real</h4>
+                        <p>Recibe alertas de nuevas tareas, solicitudes y cambios importantes.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                        </svg>
+                    </div>
+                    <div class="feature-item-content">
+                        <h4>Materias Personalizadas</h4>
+                        <p>Organiza tus tareas por materias con colores distintivos.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                        </svg>
+                    </div>
+                    <div class="feature-item-content">
+                        <h4>Estados de Tareas</h4>
+                        <p>Pendiente, En Progreso, Completada, Vencida. Seguimiento completo.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M8.5 11a4 4 0 100-8 4 4 0 000 8zM20 8v6M23 11h-6"/>
+                        </svg>
+                    </div>
+                    <div class="feature-item-content">
+                        <h4>Roles y Permisos</h4>
+                        <p>Líder, Moderador y Miembro. Cada rol con permisos específicos.</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-item-content">
+                        <h4>Historial de Actividades</h4>
+                        <p>Registro completo de todas las acciones en el grupo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Cómo Funciona -->
+    <section class="how-it-works">
+        <div class="container">
+            <h3 class="section-title">¿Cómo funciona?</h3>
+            <p class="section-subtitle">Comienza en 3 simples pasos</p>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8zM16 11h6M19 8v6"/>
+                        </svg>
+                    </div>
+                    <h4>Crea tu cuenta</h4>
+                    <p>Regístrate gratis en segundos. Solo necesitas tu email.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                        </svg>
+                    </div>
+                    <h4>Únete o crea un grupo</h4>
+                    <p>Crea tu grupo de estudio o únete con un código de invitación.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/>
+                        </svg>
+                    </div>
+                    <h4>Comienza a organizarte</h4>
+                    <p>Crea tareas, visualiza el calendario y colabora con tu equipo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h3 class="cta-title">¿Listo para organizarte mejor?</h3>
+                <p class="cta-text">Únete a Agenda Virtual Eiwa y lleva tu productividad al siguiente nivel</p>
+                <div class="cta-buttons">
+                    <a href="{% url 'register' %}" class="btn-cta btn-cta-primary">Crear Cuenta Gratis</a>
+                    <a href="{% url 'login' %}" class="btn-cta btn-cta-secondary">Iniciar Sesión</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Agenda Virtual Eiwa</h3>
+                    <p>Plataforma de gestión académica colaborativa</p>
+                </div>
+                <div class="footer-links">
+                    <a href="{% url 'privacy_policy' %}">Política de Privacidad</a>
+                    <span class="separator">•</span>
+                    <a href="{% url 'terms_conditions' %}">Términos y Condiciones</a>
+                </div>
+                <p class="footer-copyright">© 2026 — Desarrollado por Justin Ocaña. Proyecto académico estudiantil.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/video-controls.js' %}"></script>
+</body>
+
+</html>

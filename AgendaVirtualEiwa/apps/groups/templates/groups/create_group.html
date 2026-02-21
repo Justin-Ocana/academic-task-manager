@@ -1,0 +1,383 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Crear Grupo - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/groups.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Crear Nuevo Grupo</h1>
+    <p>Configura tu grupo y comienza a organizar actividades</p>
+</div>
+
+<div class="form-container">
+    <form method="post" class="group-form">
+        {% csrf_token %}
+
+        <div class="form-section">
+            <h2>Información Básica</h2>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <span class="form-error">{{ form.name.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                <span class="form-error">{{ form.description.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.max_members.label }}</label>
+                {{ form.max_members }}
+                {% if form.max_members.errors %}
+                <span class="form-error">{{ form.max_members.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Configuración de Ingreso</h2>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.entry_type.label }}</label>
+                {{ form.entry_type }}
+                <small class="form-help">Ingreso libre: cualquiera con el código puede entrar. Con aprobación: debes
+                    aprobar cada solicitud.</small>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Permisos de Tareas</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">{{ form.task_create_permission.label }}</label>
+                    {{ form.task_create_permission }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">{{ form.task_edit_permission.label }}</label>
+                    {{ form.task_edit_permission }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">{{ form.task_delete_permission.label }}</label>
+                    {{ form.task_delete_permission }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">{{ form.task_revert_permission.label }}</label>
+                    {{ form.task_revert_permission }}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Permisos de Materias</h2>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.subject_permission.label }}</label>
+                {{ form.subject_permission }}
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
+                    <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                </svg>
+                Documentos Adjuntos
+            </h2>
+
+            <div class="form-group">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: #f8f9fa; border-radius: 10px; border: 2px solid #e9ecef; cursor: pointer;">
+                    {{ form.documents_enabled }}
+                    <label for="id_documents_enabled" style="cursor: pointer; font-weight: 600; color: var(--azul-principal); margin: 0; flex: 1;">
+                        {{ form.documents_enabled.label }}
+                    </label>
+                </div>
+                <small class="form-help">Permite que los miembros suban archivos PDF, Word, Excel, etc. a las tareas</small>
+            </div>
+            
+            <!-- Advertencia experimental -->
+            <div id="experimentalWarning" class="experimental-warning" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <div>
+                    <strong>Función Experimental</strong>
+                    <p>La subida de documentos está en fase de prueba. Puede presentar pequeños errores. Estamos trabajando para mejorarla continuamente.</p>
+                </div>
+            </div>
+
+            <div class="form-group" id="documentPermissionGroup" style="display: none;">
+                <label class="form-label">{{ form.document_upload_permission.label }}</label>
+                {{ form.document_upload_permission }}
+                <small class="form-help">
+                    <strong>Todos:</strong> Cualquier miembro puede subir documentos<br>
+                    <strong>Solo líder:</strong> Solo tú puedes subir documentos<br>
+                    <strong>Con aprobación:</strong> Los miembros pueden subir, pero requieren tu aprobación
+                </small>
+            </div>
+        </div>
+
+        <style>
+            #id_documents_enabled {
+                width: 24px;
+                height: 24px;
+                cursor: pointer;
+                appearance: none;
+                background: white;
+                border: 2px solid #cbd5e0;
+                border-radius: 6px;
+                position: relative;
+            }
+            #id_documents_enabled:checked {
+                background: linear-gradient(135deg, var(--azul-pastel), var(--azul-principal));
+                border-color: var(--azul-principal);
+            }
+            #id_documents_enabled:checked::after {
+                content: '';
+                position: absolute;
+                left: 7px;
+                top: 3px;
+                width: 6px;
+                height: 11px;
+                border: solid white;
+                border-width: 0 2.5px 2.5px 0;
+                transform: rotate(45deg);
+            }
+            
+            /* Advertencia experimental */
+            .experimental-warning {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+                background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+                border: 2px solid #ffc107;
+                border-left: 4px solid #ff9800;
+                border-radius: 12px;
+                margin-top: 12px;
+                animation: slideDown 0.3s ease;
+            }
+            
+            .experimental-warning svg {
+                width: 24px;
+                height: 24px;
+                color: #f57c00;
+                flex-shrink: 0;
+                margin-top: 2px;
+            }
+            
+            .experimental-warning strong {
+                display: block;
+                color: #e65100;
+                font-size: 0.95rem;
+                margin-bottom: 4px;
+            }
+            
+            .experimental-warning p {
+                margin: 0;
+                color: #ef6c00;
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            /* Modo oscuro */
+            body[data-theme="dark"] #id_documents_enabled {
+                background: var(--dark-bg-card, #1e2533);
+                border-color: var(--dark-border, #2d3748);
+            }
+            body[data-theme="dark"] #id_documents_enabled:checked {
+                background: linear-gradient(135deg, var(--dark-azul-pastel, #6bb3ff), var(--azul-principal));
+                border-color: var(--dark-azul-pastel, #6bb3ff);
+            }
+            body[data-theme="dark"] .form-group > div {
+                background: var(--dark-bg-secondary, #1a1f2e) !important;
+                border-color: var(--dark-border, #2d3748) !important;
+            }
+            body[data-theme="dark"] .form-group > div label {
+                color: var(--dark-text-primary, #e8eaed) !important;
+            }
+            body[data-theme="dark"] .experimental-warning {
+                background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(255, 152, 0, 0.08) 100%);
+                border-color: rgba(255, 183, 77, 0.3);
+                border-left-color: #ffa726;
+            }
+            body[data-theme="dark"] .experimental-warning svg {
+                color: #ffb74d;
+            }
+            body[data-theme="dark"] .experimental-warning strong {
+                color: #ffcc80;
+            }
+            body[data-theme="dark"] .experimental-warning p {
+                color: #ffe0b2;
+            }
+        </style>
+
+        <div class="form-actions">
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Crear Grupo</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Mostrar/ocultar permisos de documentos según checkbox
+    document.addEventListener('DOMContentLoaded', function() {
+        const documentsCheckbox = document.getElementById('id_documents_enabled');
+        const permissionGroup = document.getElementById('documentPermissionGroup');
+        const experimentalWarning = document.getElementById('experimentalWarning');
+        
+        if (documentsCheckbox) {
+            function toggleDocumentPermissions() {
+                if (documentsCheckbox.checked) {
+                    permissionGroup.style.display = 'block';
+                    if (experimentalWarning) {
+                        experimentalWarning.style.display = 'flex';
+                    }
+                } else {
+                    permissionGroup.style.display = 'none';
+                    if (experimentalWarning) {
+                        experimentalWarning.style.display = 'none';
+                    }
+                }
+            }
+            
+            documentsCheckbox.addEventListener('change', toggleDocumentPermissions);
+            toggleDocumentPermissions(); // Ejecutar al cargar
+        }
+    });
+</script>
+
+<!-- Modal de advertencia multigrupo -->
+{% if user_groups_count >= 1 %}
+<div id="multigroupWarningModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content" style="max-width: 600px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width: 40px; height: 40px;">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--azul-principal); margin-bottom: 10px;">Función Experimental</h2>
+            <p style="color: #666; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">
+                <strong>Los multigrupos están en fase de prueba.</strong><br>
+                Recomendamos estar en un solo grupo para una experiencia óptima. Puedes probar esta función, pero ten en cuenta que puede presentar errores o comportamientos inesperados.
+            </p>
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px;">
+                <p style="margin: 0; font-size: 0.95rem; display: flex; align-items: flex-start; gap: 8px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <span style="color: #dc2626;"><strong>Advertencia:</strong> Esta funcionalidad está sujeta a cambios y puede contener errores. Úsala bajo tu propio riesgo.</span>
+                </p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button type="button" class="btn btn-secondary" onclick="closeWarningModal()">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="confirmCreateGroup()">Entiendo, Continuar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    #multigroupWarningModal.modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #multigroupWarningModal .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    #multigroupWarningModal .modal-content {
+        position: relative;
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        z-index: 1;
+    }
+
+    /* Modo oscuro */
+    [data-theme="dark"] #multigroupWarningModal .modal-content {
+        background: #1a1f2e;
+        color: #e8eaed;
+    }
+
+    [data-theme="dark"] #multigroupWarningModal h2 {
+        color: rgb(135, 169, 224) !important;
+    }
+
+    [data-theme="dark"] #multigroupWarningModal p {
+        color: #b8bcc4 !important;
+    }
+</style>
+
+<script>
+    const userGroupsCount = {{ user_groups_count|default:0 }};
+    const form = document.querySelector('.group-form');
+    const submitBtn = document.getElementById('submitBtn');
+    const modal = document.getElementById('multigroupWarningModal');
+    let warningShown = false;
+
+    if (userGroupsCount >= 1) {
+        form.addEventListener('submit', function(e) {
+            if (!warningShown) {
+                e.preventDefault();
+                modal.style.display = 'flex';
+            }
+        });
+    }
+
+    function closeWarningModal() {
+        modal.style.display = 'none';
+    }
+
+    function confirmCreateGroup() {
+        warningShown = true;
+        modal.style.display = 'none';
+        form.submit();
+    }
+</script>
+{% endif %}
+{% endblock %}

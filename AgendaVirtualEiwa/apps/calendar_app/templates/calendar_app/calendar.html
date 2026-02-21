@@ -1,0 +1,179 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Calendario - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/calendar.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="calendar-container">
+    <!-- Header con controles -->
+    <div class="calendar-header">
+        <div class="calendar-title-section">
+            <h1>Calendario</h1>
+            <div class="calendar-info">
+                <span class="group-count">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    {{ user_groups.count }} grupo{{ user_groups.count|pluralize }}
+                </span>
+                <span class="mode-indicator unified">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span class="mode-text">Todos los grupos</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="calendar-controls">
+            <button class="btn btn-secondary" id="prevMonth">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <button class="btn btn-primary" id="todayBtn">Hoy</button>
+            <button class="btn btn-secondary" id="nextMonth">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            <h2 id="currentMonth"></h2>
+        </div>
+
+        <div class="view-toggle">
+            <button class="btn btn-view active" data-view="month">Mes</button>
+            <button class="btn btn-view" data-view="week">Semana</button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="calendar-filters">
+        <select id="groupFilter" class="filter-select">
+            <option value="">Todos los grupos</option>
+            {% for membership in user_groups %}
+            <option value="{{ membership.group.id }}" {% if multigroup_mode == 'separated' and user.last_active_group_id == membership.group.id %}selected{% endif %}>
+                {{ membership.group.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <select id="subjectFilter" class="filter-select">
+            <option value="">Todas las materias</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }} ({{ subject.group.name }})</option>
+            {% endfor %}
+        </select>
+
+        <select id="statusFilter" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="pending">Pendientes</option>
+            <option value="completed">Completadas</option>
+            <option value="overdue">Vencidas</option>
+            <option value="archived">Archivadas</option>
+        </select>
+    </div>
+
+    <!-- Indicador de carga semanal -->
+    <div class="workload-indicator" id="workloadIndicator"></div>
+
+    <!-- Calendario -->
+    <div class="calendar-grid" id="calendarGrid">
+        <!-- Se genera dinámicamente con JavaScript -->
+    </div>
+
+    <!-- Leyenda -->
+    <div class="calendar-legend">
+        <div class="legend-item">
+            <span class="legend-dot completed"></span>
+            <span>Completada</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot pending"></span>
+            <span>Pendiente</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot overdue"></span>
+            <span>Vencida</span>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de detalles del día -->
+<div class="modal" id="dayModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalDate"></h3>
+            <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody">
+            <!-- Se llena dinámicamente -->
+        </div>
+    </div>
+</div>
+
+<!-- Script para actualizar indicador dinámicamente -->
+<script>
+    // Datos de grupos para el indicador
+    const groupsData = {
+        {% for membership in user_groups %}
+        '{{ membership.group.id }}': '{{ membership.group.name }}',
+        {% endfor %}
+    };
+
+    // Actualizar indicador cuando cambia el filtro de grupo
+    document.addEventListener('DOMContentLoaded', function() {
+        const groupFilter = document.getElementById('groupFilter');
+        const modeIndicator = document.querySelector('.mode-indicator');
+        const modeText = modeIndicator.querySelector('.mode-text');
+        const modeIcon = modeIndicator.querySelector('svg');
+
+        function updateIndicator() {
+            const selectedGroup = groupFilter.value;
+            
+            if (selectedGroup && selectedGroup !== '') {
+                // Cambiar a modo filtrado (amarillo)
+                modeIndicator.classList.remove('unified');
+                modeIndicator.classList.add('filtered');
+                modeText.textContent = groupsData[selectedGroup];
+                
+                // Cambiar icono a punto focal
+                modeIcon.innerHTML = `
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6M1 12h6m6 0h6"></path>
+                `;
+            } else {
+                // Cambiar a modo todos los grupos (verde)
+                modeIndicator.classList.remove('filtered');
+                modeIndicator.classList.add('unified');
+                modeText.textContent = 'Todos los grupos';
+                
+                // Cambiar icono a capas
+                modeIcon.innerHTML = `
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                `;
+            }
+        }
+
+        // Actualizar al cambiar el filtro
+        groupFilter.addEventListener('change', updateIndicator);
+        
+        // Actualizar al cargar la página
+        updateIndicator();
+    });
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/calendar.js' %}"></script>
+{% endblock %}

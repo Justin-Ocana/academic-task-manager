@@ -1,0 +1,47 @@
+{% extends 'Index/base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card login-card">
+        <h2 class="auth-title">Iniciar Sesión</h2>
+        <p class="auth-subtitle">Bienvenido de vuelta</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Correo Electrónico</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                {{ form.password }}
+            </div>
+
+            {% if form.errors %}
+            <div class="alert alert-error">
+                <p>Correo o contraseña incorrectos.</p>
+            </div>
+            {% endif %}
+
+            <div class="forgot-password">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <button type="submit" class="btn btn-accent btn-submit">Iniciar Sesión</button>
+
+            <div class="auth-link">
+                ¿No tienes cuenta? <a href="{% url 'register' %}">Crear Cuenta</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

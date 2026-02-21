@@ -1,0 +1,507 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+{% load task_filters %}
+{% load avatar_tags %}
+
+{% block title %}Todas las Tareas - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="tasks-header">
+    <div class="tasks-title-section">
+        <h1>Todas las Tareas</h1>
+        <div class="tasks-info">
+            <span class="task-count">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                {{ tasks.count }} tarea{{ tasks.count|pluralize }}
+            </span>
+            {% if group_filter == 'multiple' and filtered_groups %}
+                <span class="mode-indicator filtered">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span class="mode-text">{{ filtered_groups|join:", " }}</span>
+                </span>
+            {% elif group_filter and group_filter != 'all' and group_filter != 'multiple' %}
+                {% for membership in user_groups %}
+                    {% if membership.group.id|stringformat:"s" == group_filter %}
+                    <span class="mode-indicator filtered">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 1v6m0 6v6M1 12h6m6 0h6"></path>
+                        </svg>
+                        <span class="mode-text">{{ membership.group.name }}</span>
+                    </span>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+            <span class="group-count">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                {{ user_groups.count }} grupo{{ user_groups.count|pluralize }}
+            </span>
+            <span class="mode-indicator unified">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                </svg>
+                <span class="mode-text">Todos los grupos</span>
+            </span>
+            {% endif %}
+        </div>
+    </div>
+    {% if can_create %}
+    <button type="button" class="btn btn-primary" id="createTaskBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+            <path d="M12 4v16m8-8H4"></path>
+        </svg>
+        Nueva Tarea
+    </button>
+    {% endif %}
+</div>
+
+<!-- Botón flotante para móvil -->
+<button type="button" class="mobile-filter-trigger" id="mobileFilterBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+    </svg>
+    <span class="filter-count" id="filterCount" style="display: none;">0</span>
+</button>
+
+<div class="filters-container">
+    <form method="get" class="filters-bar-modern" id="filtersModal">
+        <!-- Preservar filtros activos -->
+        {% if request.GET.groups %}
+        <input type="hidden" name="groups" value="{{ request.GET.groups }}" id="hiddenGroups">
+        {% endif %}
+        {% if status_filter %}
+        <input type="hidden" name="status" value="{{ status_filter }}" id="hiddenStatus">
+        {% endif %}
+        {% if subject_filter and subject_filter != 'all' %}
+        <input type="hidden" name="subject" value="{{ subject_filter }}" id="hiddenSubject">
+        {% endif %}
+        {% if sort_by and sort_by != 'due_date' %}
+        <input type="hidden" name="sort" value="{{ sort_by }}" id="hiddenSort">
+        {% endif %}
+        <div>
+            <!-- Header del modal (solo móvil) -->
+            <div class="mobile-filters-header">
+                <h3>Filtrar Tareas</h3>
+                <button type="button" class="mobile-close-btn" id="mobileCloseBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Filtros básicos -->
+            <div class="basic-filters">
+                <button type="submit" name="time" value="" class="quick-filter-btn {% if not time_filter %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Todas
+                </button>
+                <button type="submit" name="time" value="today" class="quick-filter-btn {% if time_filter == 'today' %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Hoy
+                </button>
+                <button type="submit" name="time" value="tomorrow" class="quick-filter-btn {% if time_filter == 'tomorrow' %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Mañana
+                </button>
+                <button type="submit" name="time" value="this_week" class="quick-filter-btn {% if time_filter == 'this_week' %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Esta Semana
+                </button>
+                <button type="submit" name="time" value="next_week" class="quick-filter-btn {% if time_filter == 'next_week' %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 5l7 7-7 7"></path>
+                    </svg>
+                    Próxima Semana
+                </button>
+                <button type="submit" name="time" value="overdue" class="quick-filter-btn overdue {% if time_filter == 'overdue' %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    Vencidas
+                </button>
+
+                <button type="button" class="advanced-toggle-btn" id="advancedToggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                    Más Filtros
+                </button>
+            </div>
+
+            <!-- Filtros avanzados -->
+            <div class="advanced-filters" id="advancedFilters" style="display: none;">
+                <!-- Filtro por Grupo (NUEVO) -->
+                <div class="filter-group-modern">
+                    <label>Grupo</label>
+                    <select name="group" onchange="this.form.submit()">
+                        <option value="all" {% if not group_filter or group_filter == 'all' %}selected{% endif %}>Todos los grupos</option>
+                        {% for membership in user_groups %}
+                        <option value="{{ membership.group.id }}" {% if group_filter == membership.group.id|stringformat:"s" %}selected{% endif %}>
+                            {{ membership.group.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-group-modern">
+                    <label>Estado</label>
+                    <select name="status" onchange="this.form.submit()">
+                        <option value="">Activas</option>
+                        <option value="pending" {% if status_filter == "pending" %}selected{% endif %}>Pendientes</option>
+                        <option value="completed" {% if status_filter == "completed" %}selected{% endif %}>Completadas</option>
+                        <option value="archived" {% if status_filter == "archived" %}selected{% endif %}>Archivadas</option>
+                    </select>
+                </div>
+
+                {% if subjects %}
+                <div class="filter-group-modern">
+                    <label>Materia</label>
+                    <select name="subject" onchange="this.form.submit()">
+                        <option value="all">Todas</option>
+                        {% for subject in subjects %}
+                        <option value="{{ subject.id }}" {% if subject_filter|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
+                            {{ subject.name }} ({{ subject.group.name }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="filter-group-modern">
+                    <label>Ordenar</label>
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="due_date" {% if sort_by == "due_date" %}selected{% endif %}>Fecha más cercana</option>
+                        <option value="due_date_desc" {% if sort_by == "due_date_desc" %}selected{% endif %}>Fecha más lejana</option>
+                        <option value="created" {% if sort_by == "created" %}selected{% endif %}>Más recientes</option>
+                        <option value="subject" {% if sort_by == "subject" %}selected{% endif %}>Por materia</option>
+                        <option value="group" {% if sort_by == "group" %}selected{% endif %}>Por grupo</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('advancedToggle').addEventListener('click', function () {
+        const advancedFilters = document.getElementById('advancedFilters');
+        const isVisible = advancedFilters.style.display !== 'none';
+        if (isVisible) {
+            advancedFilters.style.display = 'none';
+            this.classList.remove('active');
+        } else {
+            advancedFilters.style.display = 'grid';
+            this.classList.add('active');
+        }
+    });
+
+    const mobileFilterBtn = document.getElementById('mobileFilterBtn');
+    const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+    const filtersModal = document.getElementById('filtersModal');
+    const filterCount = document.getElementById('filterCount');
+
+    function updateFilterCount() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let count = 0;
+        
+        // Solo contar filtros de tiempo si tienen valor (no vacío = "Todas")
+        const timeFilter = urlParams.get('time');
+        if (timeFilter && timeFilter !== '') count++;
+        
+        // Solo contar estado si no es el valor por defecto
+        const statusFilter = urlParams.get('status');
+        if (statusFilter && statusFilter !== '') count++;
+        
+        // Solo contar materia si no es "all"
+        const subjectFilter = urlParams.get('subject');
+        if (subjectFilter && subjectFilter !== 'all' && subjectFilter !== '') count++;
+        
+        // Solo contar grupo si no es "all" (no contar como filtro activo)
+        // No contamos el filtro de grupo en el badge
+        
+        // Solo contar ordenamiento si no es el valor por defecto
+        const sortFilter = urlParams.get('sort');
+        if (sortFilter && sortFilter !== 'due_date' && sortFilter !== '') count++;
+        
+        if (count > 0) {
+            filterCount.textContent = count;
+            filterCount.style.display = 'flex';
+            mobileFilterBtn.classList.add('has-filters');
+        } else {
+            filterCount.style.display = 'none';
+            mobileFilterBtn.classList.remove('has-filters');
+        }
+    }
+
+    mobileFilterBtn.addEventListener('click', function () {
+        filtersModal.classList.add('mobile-active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    function closeModal() {
+        filtersModal.classList.remove('mobile-active');
+        document.body.style.overflow = '';
+    }
+
+    mobileCloseBtn.addEventListener('click', closeModal);
+    filtersModal.addEventListener('click', function (e) {
+        if (e.target === filtersModal) closeModal();
+    });
+
+    updateFilterCount();
+</script>
+
+{% if tasks %}
+<div class="tasks-list">
+    {% for task in tasks %}
+    <div class="task-card-modern {% if task.user_completed %}completed{% endif %} {% if task.status == 'archived' %}archived{% endif %}"
+        data-task-id="{{ task.id }}" onclick="window.location.href='{% url 'task_detail' task.id %}'" style="cursor: pointer;">
+        <div class="task-color-bar" style="background: {{ task.subject.color }};"></div>
+
+        <div class="task-content">
+            <div class="task-header-row">
+                <span class="subject-badge-modern" style="background: {{ task.subject.color }};">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    {{ task.subject.name }}
+                </span>
+
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="group-badge-modern">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        {{ task.group.name }}
+                    </span>
+
+                    {% if task.status == 'archived' %}
+                    <span class="archived-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        Archivada
+                    </span>
+                    {% endif %}
+                    <span class="task-date-badge {% if task.is_overdue and task.status != 'archived' %}overdue{% endif %}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        {% if task.due_date.weekday == 0 %}Lun{% elif task.due_date.weekday == 1 %}Mar{% elif task.due_date.weekday == 2 %}Mié{% elif task.due_date.weekday == 3 %}Jue{% elif task.due_date.weekday == 4 %}Vie{% elif task.due_date.weekday == 5 %}Sáb{% else %}Dom{% endif %}, {{ task.due_date|date:"d M" }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="task-description-modern">
+                {{ task.description }}
+            </div>
+
+            <div class="task-footer-row">
+                <div class="task-author-info">
+                    {% render_avatar_inline task.created_by '32px' %}
+                    <div class="author-details">
+                        <span class="author-name-small">{{ task.created_by.nombre }} {{ task.created_by.apellido }}</span>
+                        <span class="author-time">{{ task.created_at|timesince }} atrás</span>
+                    </div>
+                </div>
+
+                <div class="task-actions-modern">
+                    {% if task.status != 'archived' %}
+                    <form method="post" action="{% url 'toggle_task_status' task.id %}" style="display: inline;" onclick="event.stopPropagation();">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-complete {% if task.user_completed %}completed{% endif %}" onclick="event.stopPropagation();">
+                            {% if task.user_completed %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span>Reabrir</span>
+                            {% else %}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Completar</span>
+                            {% endif %}
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="archived-notice">Solo lectura</span>
+                    {% endif %}
+
+                    {% if task.status != 'archived' %}
+                        {% with is_leader=user_roles|get_item:task.group.id|get_item:'is_leader' %}
+                        {% comment %}Verificar permisos de edición según configuración del grupo{% endcomment %}
+                        {% if task.group.task_edit_permission == 'all' %}
+                            <a href="{% url 'edit_task' task.id %}" class="btn-action btn-edit" title="Editar" onclick="event.stopPropagation();">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </a>
+                        {% elif task.group.task_edit_permission == 'approval' or task.group.task_edit_permission == 'approval_leader_creator' %}
+                            <a href="{% url 'edit_task' task.id %}" class="btn-action btn-edit" title="Editar (requiere aprobación)" onclick="event.stopPropagation();">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </a>
+                        {% elif task.group.task_edit_permission == 'leader' and is_leader %}
+                            <a href="{% url 'edit_task' task.id %}" class="btn-action btn-edit" title="Editar" onclick="event.stopPropagation();">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </a>
+                        {% endif %}
+
+                        {% comment %}Verificar permisos de eliminación según configuración del grupo{% endcomment %}
+                        {% if is_leader and task.group.task_delete_permission == 'leader' %}
+                            <form method="post" action="{% url 'delete_task' task.id %}" style="display: inline;" onsubmit="event.stopPropagation(); return confirm('¿Estás seguro de eliminar esta tarea?');" onclick="event.stopPropagation();">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-action btn-delete" title="Eliminar" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        {% elif task.group.task_delete_permission == 'leader_creator' and is_leader or task.created_by == request.user %}
+                            <form method="post" action="{% url 'delete_task' task.id %}" style="display: inline;" onsubmit="event.stopPropagation(); return confirm('¿Estás seguro de eliminar esta tarea?');" onclick="event.stopPropagation();">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-action btn-delete" title="Eliminar" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        {% elif task.group.task_delete_permission == 'all' %}
+                            <form method="post" action="{% url 'delete_task' task.id %}" style="display: inline;" onsubmit="event.stopPropagation(); return confirm('¿Estás seguro de eliminar esta tarea?');" onclick="event.stopPropagation();">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-action btn-delete" title="Eliminar" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        {% endif %}
+                        {% endwith %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+    </svg>
+    <h2>No hay tareas</h2>
+    <p>No se encontraron tareas con los filtros seleccionados</p>
+</div>
+{% endif %}
+
+<!-- Modal de selección de grupo -->
+<div id="groupSelectionModal" class="group-modal" style="display: none;">
+    <div class="group-modal-overlay"></div>
+    <div class="group-modal-content">
+        <div class="group-modal-header">
+            <h2>Selecciona un grupo</h2>
+            <button type="button" class="group-modal-close" onclick="closeGroupModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="group-modal-body">
+            <p>Elige el grupo donde quieres crear la tarea:</p>
+            <div class="group-selection-grid">
+                {% for membership in user_groups %}
+                    {% comment %}
+                    Verificar si el usuario puede crear tareas en este grupo:
+                    - Si task_create_permission es 'all' o 'approval': todos pueden
+                    - Si task_create_permission es 'leader': solo líderes
+                    {% endcomment %}
+                    {% if membership.group.task_create_permission == 'all' or membership.group.task_create_permission == 'approval' or membership.role == 'leader' %}
+                    <a href="{% url 'create_task' membership.group.id %}" class="group-selection-card">
+                        <div class="group-selection-icon">
+                            {{ membership.group.name|first }}
+                        </div>
+                        <div class="group-selection-info">
+                            <h3>{{ membership.group.name }}</h3>
+                            <p>
+                                {% if membership.role == 'leader' %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                </svg>
+                                Líder
+                                {% else %}
+                                Miembro
+                                {% endif %}
+                            </p>
+                        </div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="group-selection-arrow">
+                            <path d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Modal de selección de grupo
+    const createTaskBtn = document.getElementById('createTaskBtn');
+    const groupModal = document.getElementById('groupSelectionModal');
+
+    if (createTaskBtn) {
+        createTaskBtn.addEventListener('click', function() {
+            groupModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    function closeGroupModal() {
+        groupModal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    // Cerrar al hacer clic en el overlay
+    if (groupModal) {
+        groupModal.querySelector('.group-modal-overlay').addEventListener('click', closeGroupModal);
+    }
+</script>
+
+{% endblock %}

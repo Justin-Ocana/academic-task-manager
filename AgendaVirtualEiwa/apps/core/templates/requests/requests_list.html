@@ -1,0 +1,68 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Solicitudes - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/requests.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Solicitudes Pendientes</h1>
+    <p>Gestiona las solicitudes de tus grupos</p>
+</div>
+
+{% if not is_leader_of_any %}
+<div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+        </path>
+    </svg>
+    <h2>No eres líder de ningún grupo</h2>
+    <p>Solo los líderes pueden gestionar solicitudes</p>
+</div>
+{% else %}
+<div class="groups-grid">
+    {% for item in groups_with_requests %}
+    <a href="{% url 'group_requests' item.group.id %}" class="group-card animate-card"
+        style="animation-delay: {{ forloop.counter|add:0|floatformat:1 }}s;">
+        <div class="group-header">
+            <div class="group-icon">{{ item.group.name|first }}</div>
+            <div class="group-info">
+                <h3>{{ item.group.name }}</h3>
+                <p>{{ item.total }} solicitud{{ item.total|pluralize:"es" }} pendiente{{ item.total|pluralize }}</p>
+            </div>
+        </div>
+        <div class="task-stats">
+            {% if item.join_requests > 0 %}
+            <div class="stat-item">
+                <span class="stat-value">{{ item.join_requests }}</span>
+                <span class="stat-label">Ingreso</span>
+            </div>
+            {% endif %}
+            {% if item.task_requests > 0 %}
+            <div class="stat-item">
+                <span class="stat-value">{{ item.task_requests }}</span>
+                <span class="stat-label">Tareas</span>
+            </div>
+            {% endif %}
+            {% if item.edit_requests > 0 %}
+            <div class="stat-item">
+                <span class="stat-value">{{ item.edit_requests }}</span>
+                <span class="stat-label">Ediciones</span>
+            </div>
+            {% endif %}
+            {% if item.subject_requests > 0 %}
+            <div class="stat-item">
+                <span class="stat-value">{{ item.subject_requests }}</span>
+                <span class="stat-label">Materias</span>
+            </div>
+            {% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,480 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}{% if task %}Editar{% else %}Nueva{% endif %} Tarea - {{ group.name }} - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="page-header">
+        <h1>{% if task %}Editar Tarea{% else %}{% if needs_approval %}Solicitar{% else %}Nueva{% endif %} Tarea{% endif %}</h1>
+        <p>{{ group.name }}</p>
+    </div>
+
+    {% if needs_approval %}
+    <div class="approval-notice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+            <strong>{% if task %}Solicitud de edición{% else %}Solicitud de tarea{% endif %}</strong>
+            <p>{% if task %}Tus cambios serán revisados por el líder del grupo antes de aplicarse.{% else %}Tu tarea será revisada por el líder del grupo antes de ser publicada.{% endif %}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    <div class="moderation-warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <div>
+            <strong>Contenido bloqueado</strong>
+            <p>{{ form.non_field_errors.0 }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="task-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label class="form-label required">Materia:</label>
+
+            <div class="subject-selector-wrapper">
+                <button type="button" class="subject-trigger" id="subjectTrigger">
+                    <span class="trigger-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </span>
+                    <span class="trigger-text" id="selectedSubjectText">Selecciona una materia</span>
+                    <span class="trigger-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </span>
+                </button>
+
+                <div class="subject-dropdown" id="subjectDropdown">
+                    {% for subject in subjects %}
+                    <div class="subject-option" data-subject-id="{{ subject.id }}" data-subject-name="{{ subject.name }}" data-subject-color="{{ subject.color }}">
+                        <div class="subject-color-bar" style="background: {{ subject.color }};"></div>
+                        <div class="subject-info">
+                            <span class="subject-name">{{ subject.name }}</span>
+                        </div>
+                        <div class="subject-check">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <input type="hidden" name="subject" id="subjectInput">
+            {% if form.subject.errors %}
+            <span class="form-error">{{ form.subject.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label required">Fecha Mandada:</label>
+                <input type="date" name="assigned_date" class="form-control" value="{{ today|date:'Y-m-d' }}" required>
+                {% if form.assigned_date.errors %}
+                <span class="form-error">{{ form.assigned_date.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label required">Fecha de Entrega:</label>
+                <input type="date" name="due_date" class="form-control" value="{{ form.due_date.value|date:'Y-m-d'|default:'' }}" required>
+                {% if form.due_date.errors %}
+                <span class="form-error">{{ form.due_date.errors.0 }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label required">Descripción de la Tarea:</label>
+            <textarea name="description" class="form-control" rows="5" placeholder="Ej: Resolver ejercicios del 1 al 10 de la página 45..." required>{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+            <span class="form-error">{{ form.description.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        {% if can_upload_documents %}
+        <div class="form-group">
+            <label class="form-label" style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--azul-principal); margin-bottom: 12px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px;">
+                    <path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                </svg>
+                <span>Documentos Adjuntos (opcional)</span>
+            </label>
+            
+            {% if task and existing_attachments %}
+            <div class="existing-attachments">
+                <p style="font-weight: 600; color: #2d3748; margin-bottom: 0.75rem; font-size: 0.95rem;">Documentos actuales:</p>
+                {% for attachment in existing_attachments %}
+                <div class="existing-attachment-item">
+                    <div class="attachment-icon-small">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            {% if attachment.is_pdf %}
+                            <path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            {% else %}
+                            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            {% endif %}
+                        </svg>
+                    </div>
+                    <div class="attachment-info-small">
+                        <div class="attachment-name-small">{{ attachment.original_filename }}</div>
+                        <div class="attachment-size-small">{{ attachment.file_size_mb }} MB</div>
+                    </div>
+                    <button type="button" class="delete-attachment-btn" data-attachment-id="{{ attachment.id }}" data-attachment-name="{{ attachment.original_filename }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                    <input type="checkbox" name="delete_attachments" value="{{ attachment.id }}" style="display: none;" class="delete-checkbox-hidden">
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="file-upload-area" style="margin-top: {% if task and existing_attachments %}1rem{% else %}0{% endif %};">
+                <input type="file" name="attachments" id="attachments" class="file-input" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt">
+                <label for="attachments" class="file-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <span class="file-label-text">{% if task %}Agregar más documentos{% else %}Haz clic o arrastra archivos aquí{% endif %}</span>
+                    <span class="file-label-hint">PDF, Word, Excel, PowerPoint, TXT (máx. 10 MB cada uno)</span>
+                </label>
+                <div id="fileList" class="file-list"></div>
+            </div>
+            {% if documents_need_approval %}
+            <div id="documentApprovalNotice" class="approval-notice" style="display: none; margin-top: 12px; animation: slideDown 0.3s ease;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                    <strong>{% if task %}Solicitud de edición con documentos{% else %}Solicitud de tarea con documentos{% endif %}</strong>
+                    <p>{% if task %}Al adjuntar archivos, tus cambios serán enviados como solicitud para aprobación del líder del grupo.{% else %}Al adjuntar archivos, tu tarea será enviada como solicitud para aprobación del líder del grupo.{% endif %}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <style>
+            /* Modo oscuro para label de documentos */
+            body[data-theme="dark"] .form-label {
+                color: var(--dark-text-primary, #e8eaed) !important;
+            }
+            body[data-theme="dark"] .form-label svg {
+                color: var(--dark-azul-pastel, #6bb3ff);
+            }
+        </style>
+        {% endif %}
+
+        {% if needs_approval and task %}
+        <div class="form-group">
+            <label class="form-label">Razón del cambio (opcional):</label>
+            <textarea name="edit_message" class="form-control" rows="2" placeholder="Explica por qué quieres hacer estos cambios..."></textarea>
+            <span class="form-help">Ayuda al líder a entender por qué solicitas estos cambios</span>
+        </div>
+        {% endif %}
+
+        <input type="hidden" name="title" value="Tarea">
+        <input type="hidden" name="priority" value="medium">
+
+        <div class="form-actions">
+            <a href="{% url 'group_tasks' group.id %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                {% if task %}
+                    {% if needs_approval %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Enviar Solicitud de Edición
+                    {% else %}
+                    Guardar Cambios
+                    {% endif %}
+                {% else %}
+                    {% if needs_approval %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Enviar Solicitud
+                    {% else %}
+                    Crear Tarea
+                    {% endif %}
+                {% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const trigger = document.getElementById('subjectTrigger');
+        const dropdown = document.getElementById('subjectDropdown');
+        const subjectInput = document.getElementById('subjectInput');
+        const selectedText = document.getElementById('selectedSubjectText');
+        const options = dropdown.querySelectorAll('.subject-option');
+        const form = document.querySelector('.task-form');
+
+        {% if task and task.subject %}
+        const preSelectedId = '{{ task.subject.id }}';
+        const preSelectedName = '{{ task.subject.name }}';
+        const preSelectedColor = '{{ task.subject.color }}';
+        subjectInput.value = preSelectedId;
+        selectedText.innerHTML = '<span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: ' + preSelectedColor + '; margin-right: 8px;"></span>' + preSelectedName;
+        options.forEach(opt => {
+            if (opt.dataset.subjectId === preSelectedId) {
+                opt.classList.add('selected');
+            }
+        });
+        {% endif %}
+
+        trigger.addEventListener('click', function () {
+            const isActive = dropdown.classList.contains('active');
+            if (isActive) {
+                closeDropdown();
+            } else {
+                openDropdown();
+            }
+        });
+
+        function openDropdown() {
+            trigger.classList.add('active');
+            dropdown.classList.remove('closing');
+            dropdown.classList.add('active');
+        }
+
+        function closeDropdown() {
+            trigger.classList.remove('active');
+            dropdown.classList.remove('active', 'closing');
+        }
+
+        options.forEach(option => {
+            option.addEventListener('click', function () {
+                const subjectId = this.dataset.subjectId;
+                const subjectName = this.dataset.subjectName;
+                const subjectColor = this.dataset.subjectColor;
+                options.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                subjectInput.value = subjectId;
+                selectedText.innerHTML = '<span style="display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: ' + subjectColor + '; margin-right: 8px;"></span>' + subjectName;
+                trigger.style.borderColor = '';
+                trigger.classList.remove('active');
+                dropdown.classList.remove('active', 'closing');
+            });
+        });
+
+        form.addEventListener('submit', function (e) {
+            if (!subjectInput.value) {
+                e.preventDefault();
+                trigger.style.borderColor = '#dc3545';
+                trigger.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                showConfirm({
+                    title: 'Materia requerida',
+                    message: 'Por favor selecciona una materia antes de continuar',
+                    confirmText: 'Entendido',
+                    cancelText: '',
+                    type: 'warning'
+                });
+                return false;
+            }
+
+            const dueDateInput = document.querySelector('input[name="due_date"]');
+            const dueDate = new Date(dueDateInput.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (dueDate < today) {
+                e.preventDefault();
+                showConfirm({
+                    title: 'Fecha de entrega pasada',
+                    message: 'La fecha de entrega que seleccionaste ya pasó. Esta tarea aparecerá en la sección "Vencidas" y podría confundir a tus compañeros. ¿Estás seguro de continuar?',
+                    confirmText: 'Sí, crear de todas formas',
+                    cancelText: 'Cambiar fecha',
+                    type: 'warning'
+                }).then(confirmed => {
+                    if (confirmed) {
+                        form.classList.add('bypass-protection');
+                        form.submit();
+                    }
+                });
+                return false;
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+                if (dropdown.classList.contains('active')) {
+                    closeDropdown();
+                }
+            }
+        });
+
+        // Manejo de archivos adjuntos
+        {% if can_upload_documents %}
+        const fileInput = document.getElementById('attachments');
+        const fileLabel = document.querySelector('.file-label');
+        const fileList = document.getElementById('fileList');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                updateFileList();
+            });
+
+            // Drag and drop
+            fileLabel.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('drag-over');
+            });
+
+            fileLabel.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+            });
+
+            fileLabel.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('drag-over');
+                fileInput.files = e.dataTransfer.files;
+                updateFileList();
+            });
+
+            function updateFileList() {
+                fileList.innerHTML = '';
+                const files = Array.from(fileInput.files);
+                
+                // Mostrar/ocultar aviso de aprobación según si hay archivos
+                {% if documents_need_approval %}
+                const approvalNotice = document.getElementById('documentApprovalNotice');
+                if (approvalNotice) {
+                    if (files.length > 0) {
+                        approvalNotice.style.display = 'flex';
+                    } else {
+                        approvalNotice.style.display = 'none';
+                    }
+                }
+                {% endif %}
+                
+                if (files.length === 0) {
+                    return;
+                }
+
+                files.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    
+                    const fileIcon = getFileIcon(file.name);
+                    const fileSize = formatFileSize(file.size);
+                    
+                    fileItem.innerHTML = `
+                        <div class="file-item-icon">${fileIcon}</div>
+                        <div class="file-item-info">
+                            <div class="file-item-name">${file.name}</div>
+                            <div class="file-item-size">${fileSize}</div>
+                        </div>
+                        <button type="button" class="file-item-remove" data-index="${index}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    `;
+                    
+                    fileList.appendChild(fileItem);
+                });
+
+                // Agregar event listeners para eliminar archivos
+                document.querySelectorAll('.file-item-remove').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        removeFile(index);
+                    });
+                });
+            }
+
+            function removeFile(index) {
+                const dt = new DataTransfer();
+                const files = Array.from(fileInput.files);
+                
+                files.forEach((file, i) => {
+                    if (i !== index) {
+                        dt.items.add(file);
+                    }
+                });
+                
+                fileInput.files = dt.files;
+                updateFileList();
+            }
+
+            function getFileIcon(filename) {
+                const ext = filename.split('.').pop().toLowerCase();
+                const icons = {
+                    'pdf': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>',
+                    'doc': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+                    'docx': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+                    'xls': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+                    'xlsx': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+                    'ppt': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+                    'pptx': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+                    'txt': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>'
+                };
+                return icons[ext] || icons['txt'];
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+            }
+        }
+        
+        // Confirmación para eliminar documentos existentes
+        const deleteButtons = document.querySelectorAll('.delete-attachment-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const attachmentName = this.dataset.attachmentName;
+                const attachmentItem = this.closest('.existing-attachment-item');
+                const hiddenCheckbox = attachmentItem.querySelector('.delete-checkbox-hidden');
+                
+                if (this.classList.contains('marked-for-deletion')) {
+                    // Desmarcar
+                    this.classList.remove('marked-for-deletion');
+                    attachmentItem.classList.remove('marked-for-deletion');
+                    hiddenCheckbox.checked = false;
+                } else {
+                    // Marcar para eliminar con modal personalizado
+                    const confirmed = await showConfirm({
+                        title: '¿Estás seguro?',
+                        message: `¿Eliminar "${attachmentName}"?`,
+                        confirmText: 'Confirmar',
+                        cancelText: 'Cancelar',
+                        type: 'danger'
+                    });
+                    
+                    if (confirmed) {
+                        this.classList.add('marked-for-deletion');
+                        attachmentItem.classList.add('marked-for-deletion');
+                        hiddenCheckbox.checked = true;
+                    }
+                }
+            });
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}
+

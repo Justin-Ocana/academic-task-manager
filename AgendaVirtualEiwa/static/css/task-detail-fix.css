@@ -1,0 +1,117 @@
+/* Fix para botones de detalle de tarea */
+
+.task-actions-detail {
+  display: flex !important;
+  gap: 1rem !important;
+  padding: 1.5rem 2rem !important;
+  background: #f8f9fa !important;
+  border-top: 2px solid #e9ecef !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Formularios y enlaces principales toman espacio */
+.task-actions-detail > form:not(.delete-form),
+.task-actions-detail > a.btn {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* Formulario de eliminar no crece */
+.task-actions-detail > form.delete-form {
+  flex: 0 0 auto !important;
+}
+
+/* Estilos base de botones */
+.task-actions-detail .btn {
+  width: 100% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 1rem 1.5rem !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  text-decoration: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Botón de eliminar circular */
+.task-actions-detail .btn-delete {
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px !important;
+  max-width: 52px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #fc8181, #f56565) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3) !important;
+}
+
+.task-actions-detail .btn-delete:hover {
+  background: linear-gradient(135deg, #f56565, #e53e3e) !important;
+  box-shadow: 0 6px 16px rgba(245, 101, 101, 0.4) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+}
+
+.task-actions-detail .btn-delete svg {
+  margin: 0 !important;
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* Botón verde de completar */
+.task-actions-detail .btn-success {
+  background: linear-gradient(135deg, #48bb78, #38a169) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3) !important;
+}
+
+.task-actions-detail .btn-success:hover {
+  background: linear-gradient(135deg, #38a169, #2f855a) !important;
+  box-shadow: 0 6px 16px rgba(72, 187, 120, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Botón azul de editar */
+.task-actions-detail .btn-secondary {
+  background: linear-gradient(135deg, var(--azul-pastel), var(--azul-secundario)) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(0, 109, 185, 0.3) !important;
+}
+
+.task-actions-detail .btn-secondary:hover {
+  background: linear-gradient(135deg, var(--azul-secundario), var(--azul-principal)) !important;
+  box-shadow: 0 6px 16px rgba(0, 109, 185, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .task-actions-detail {
+    flex-wrap: wrap !important;
+    padding: 1rem !important;
+  }
+
+  .task-actions-detail > form:not(.delete-form),
+  .task-actions-detail > a.btn {
+    flex: 1 1 100% !important;
+  }
+
+  .task-actions-detail > form.delete-form {
+    flex: 0 0 auto !important;
+    margin: 0 auto !important;
+  }
+
+  .task-actions-detail .btn-delete {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    max-width: 56px !important;
+  }
+}

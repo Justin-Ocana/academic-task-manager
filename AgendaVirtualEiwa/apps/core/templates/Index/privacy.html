@@ -1,0 +1,285 @@
+{% extends 'Index/base.html' %}
+{% load static %}
+
+{% block title %}Política de Privacidad - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .privacy-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .privacy-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 3px solid var(--azul-pastel);
+    }
+
+    .privacy-header h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 3rem;
+        color: var(--azul-principal);
+        margin: 0 0 15px 0;
+    }
+
+    .privacy-header .subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    .privacy-section {
+        margin-bottom: 35px;
+    }
+
+    .privacy-section h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.8rem;
+        color: var(--azul-principal);
+        margin: 0 0 15px 0;
+    }
+
+    .privacy-section p {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 15px;
+    }
+
+    .privacy-section ul {
+        margin: 15px 0;
+        padding-left: 25px;
+    }
+
+    .privacy-section li {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 10px;
+    }
+
+    .highlight-box {
+        background: #f0f7ff;
+        border-left: 4px solid var(--azul-pastel);
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 8px;
+    }
+
+    .highlight-box strong {
+        color: var(--azul-principal);
+    }
+
+    .contact-info {
+        background: var(--gris-suave);
+        padding: 25px;
+        border-radius: 15px;
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .contact-info h3 {
+        font-family: 'Bebas Neue', sans-serif;
+        color: var(--azul-principal);
+        margin: 0 0 10px 0;
+    }
+
+    @media (max-width: 768px) {
+        .privacy-container {
+            padding: 25px;
+            margin: 20px;
+        }
+
+        .privacy-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="privacy-container">
+    <div class="privacy-header">
+        <h1>Política de Privacidad</h1>
+        <p class="subtitle">Agenda Virtual Eiwa - Plataforma de Gestión Académica Colaborativa</p>
+    </div>
+
+    <div class="highlight-box">
+        <p><strong>Última actualización:</strong> Noviembre 2025</p>
+        <p>En Agenda Virtual Eiwa respetamos tu privacidad y nos comprometemos a proteger tu información personal. Esta
+            política explica qué datos recopilamos, cómo los usamos y cómo los protegemos.</p>
+        <p style="margin-top: 10px;"><strong>Nota:</strong> Este proyecto es una demostración técnica creada para la
+            Feria de Informática de EIWA. Es una plataforma educativa desarrollada por un estudiante y no representa un
+            servicio oficial del colegio.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>1. Sobre Agenda Virtual Eiwa</h2>
+        <p>Agenda Virtual Eiwa es una plataforma web colaborativa diseñada para ayudar a estudiantes a organizar tareas
+            y actividades académicas en grupo.</p>
+        <p><strong>Naturaleza del proyecto:</strong> Esta aplicación fue desarrollada por estudiantes, con fines
+            exclusivamente educativos y demostrativos. No es comercial ni oficial.</p>
+        <p><strong>Compromiso:</strong> Ofrecer una plataforma gratuita, segura y fácil de usar para la organización
+            académica colaborativa.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>2. Información que Recopilamos</h2>
+        <p>Recopilamos únicamente la información necesaria para el funcionamiento de la plataforma:</p>
+        <p><strong>Información personal:</strong></p>
+        <ul>
+            <li>Nombre y apellido</li>
+            <li>Correo electrónico (solo para creación de cuenta)</li>
+        </ul>
+        <p><strong>Contenido generado por el usuario:</strong></p>
+        <ul>
+            <li>Tareas</li>
+            <li>Grupos</li>
+            <li>Materias</li>
+            <li>Estados de progreso</li>
+        </ul>
+        <p><strong>Datos de uso:</strong></p>
+        <ul>
+            <li>Actividades dentro de los grupos (ediciones, marcación de tareas)</li>
+        </ul>
+        <p><strong>Información que NO recopilamos:</strong></p>
+        <ul>
+            <li>Números de identificación</li>
+            <li>Información financiera</li>
+            <li>Ubicación en tiempo real</li>
+            <li>Teléfonos, direcciones o datos sensibles</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>3. Cómo Usamos tu Información</h2>
+        <p>Usamos la información únicamente para:</p>
+        <ul>
+            <li>Operar la plataforma y permitir la gestión de tareas y grupos</li>
+            <li>Autenticar tu cuenta</li>
+            <li>Mostrar tu nombre a otros miembros de tus grupos</li>
+            <li>Enviar notificaciones relacionadas con tareas y solicitudes</li>
+            <li>Mejorar la calidad y funcionamiento del servicio</li>
+        </ul>
+        <p><strong>Nunca vendemos, compartimos o alquilamos tus datos con terceros con fines comerciales.</strong></p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>4. Almacenamiento y Retención de Datos</h2>
+        <p>Tu información se almacena en servidores seguros con estándares modernos de protección:</p>
+        <ul>
+            <li><strong>Ubicación:</strong> Hosting confiable con prácticas de seguridad de la industria</li>
+            <li><strong>Retención:</strong> Mientras tu cuenta esté activa</li>
+            <li><strong>Eliminación:</strong> Puedes solicitar la eliminación completa de tu cuenta</li>
+            <li><strong>Respaldo:</strong> Realizamos copias de seguridad para evitar pérdida accidental</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>5. Seguridad</h2>
+        <p>Implementamos múltiples medidas para proteger tu información:</p>
+        <ul>
+            <li>Contraseñas almacenadas con hash seguro</li>
+            <li>Conexiones protegidas mediante HTTPS</li>
+            <li>Sistema robusto de roles y permisos</li>
+            <li>Validación continua de datos para evitar ataques</li>
+            <li>Autenticación segura mediante sesiones</li>
+        </ul>
+        <p><strong>Recomendación:</strong> Usa una contraseña única y segura.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>6. Cookies</h2>
+        <p>Usamos solo cookies esenciales:</p>
+        <ul>
+            <li>Cookies de sesión (mantener tu cuenta activa)</li>
+            <li>Cookies de seguridad (proteger contra ataques)</li>
+        </ul>
+        <p><strong>No usamos cookies de publicidad, análisis ni seguimiento externo.</strong></p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>7. Tus Derechos</h2>
+        <p>Como usuario, tienes derecho a:</p>
+        <ul>
+            <li>Acceder a tus datos</li>
+            <li>Corregir información personal</li>
+            <li>Solicitar eliminación de tu cuenta</li>
+            <li>Exportar tus datos</li>
+            <li>Dejar de usar la plataforma en cualquier momento</li>
+        </ul>
+        <p>Para ejercer estos derechos, contáctanos mediante el correo oficial al final de este documento.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>8. Compartir Información</h2>
+        <p><strong>Tu información solo es visible para:</strong></p>
+        <ul>
+            <li>Otros miembros de tus grupos (nombre y progreso)</li>
+        </ul>
+        <p><strong>No compartimos tu información con:</strong></p>
+        <ul>
+            <li>Terceros</li>
+            <li>Empresas</li>
+            <li>Anunciantes</li>
+        </ul>
+        <p>Solo se compartirá si la ley lo exige o si es necesario para proteger la plataforma.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>9. Menores de Edad</h2>
+        <p>Agenda Virtual Eiwa está dirigida a estudiantes. Si eres menor de 18 años, se recomienda usarla con
+            conocimiento de tus padres o tutores.</p>
+    </div>
+
+    <div class="privacy-section">
+        <h2>10. Propiedad Intelectual y Derechos de Marca</h2>
+        <ul>
+            <li>El nombre, logo y colores de EIWA pertenecen exclusivamente a la institución educativa EIWA.</li>
+            <li>Agenda Virtual Eiwa fue programada, diseñada y desarrollada por Justin Ocaña como proyecto estudiantil.
+            </li>
+            <li>El uso del logo y nombre institucional es únicamente con fines educativos y de identificación académica.
+            </li>
+            <li>Este proyecto no es comercial ni oficial.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>11. Limitación de Responsabilidad</h2>
+        <p>La plataforma se ofrece "tal cual", únicamente para fines educativos:</p>
+        <ul>
+            <li>No garantizamos disponibilidad continua</li>
+            <li>No nos responsabilizamos por pérdida de datos por fallos técnicos</li>
+            <li>El uso es responsabilidad del usuario</li>
+            <li>Esta herramienta no reemplaza métodos oficiales de entrega de tareas del colegio</li>
+        </ul>
+    </div>
+
+    <div class="privacy-section">
+        <h2>12. Cambios a Esta Política</h2>
+        <p>Podemos actualizar esta política para mejorar prácticas o cumplir requisitos legales. Se notificará a los
+            usuarios mediante avisos en la plataforma.</p>
+    </div>
+
+    <div class="contact-info">
+        <h3>Contacto</h3>
+        <p>Para preguntas, sugerencias o solicitudes:</p>
+        <p><strong>Desarrollador:</strong> Justin Ocaña</p>
+        <p><strong>Institución:</strong> EIWA</p>
+        <p><strong>Email:</strong> justinantonio2009@gmail.com</p>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 40px;">
+        <p style="text-align: center; margin: 0;"><strong>Aviso Final</strong></p>
+        <p style="text-align: center; margin: 10px 0 0 0;">Agenda Virtual Eiwa es un proyecto académico independiente.
+            El nombre, logo y colores de EIWA son propiedad de la institución educativa EIWA y se utilizan únicamente
+            con fines educativos.</p>
+        <p style="text-align: center; margin: 15px 0 0 0; font-weight: 600;">© 2026 — Plataforma desarrollada por Justin
+            Ocaña. Proyecto estudiantil con fines educativos.</p>
+    </div>
+</div>
+{% endblock %}

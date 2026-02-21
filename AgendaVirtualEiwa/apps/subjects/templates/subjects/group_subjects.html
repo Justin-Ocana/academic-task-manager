@@ -1,0 +1,90 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Materias - {{ group.name }} - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/subjects.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Materias de {{ group.name }}</h1>
+    {% if can_add %}
+    <a href="{% url 'add_subject' group.id %}" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Agregar Materia
+    </a>
+    {% endif %}
+</div>
+
+{% if is_leader and pending_requests %}
+<div class="pending-requests-section">
+    <h3>Solicitudes Pendientes</h3>
+    {% for req in pending_requests %}
+    <div class="request-card">
+        <div class="subject-preview" style="background: {{ req.color }};">
+            {{ req.name.0 }}
+        </div>
+        <div class="request-info">
+            <h4>{{ req.name }}</h4>
+            <p>Solicitado por {{ req.requested_by.nombre }} {{ req.requested_by.apellido }}</p>
+        </div>
+        <div class="request-actions">
+            <form method="post" action="{% url 'approve_subject_request' req.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-primary">Aprobar</button>
+            </form>
+            <form method="post" action="{% url 'reject_subject_request' req.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-secondary">Rechazar</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if subjects %}
+<div class="subjects-grid">
+    {% for subject in subjects %}
+    <div class="subject-card">
+        <div class="subject-color" style="background: {{ subject.color }};"></div>
+        <div class="subject-info">
+            <h3>{{ subject.name }}</h3>
+            <p class="subject-meta">Creado por {{ subject.created_by.nombre }}</p>
+            <div class="subject-stats">
+                <span>0 tareas</span>
+            </div>
+        </div>
+        {% if is_leader %}
+        <div class="subject-actions">
+            <form method="post" action="{% url 'delete_subject' subject.id %}" style="display: inline;"
+                onsubmit="return confirm('¿Eliminar {{ subject.name }}?');">
+                {% csrf_token %}
+                <button type="submit" class="btn-icon-danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+    </svg>
+    <h3>No hay materias aún</h3>
+    <p>Agrega la primera materia para comenzar</p>
+</div>
+{% endif %}
+{% endblock %}

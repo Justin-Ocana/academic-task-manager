@@ -1,0 +1,158 @@
+{% extends 'Dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Unirse a Grupo - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/groups.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="join-container">
+    <div class="join-card">
+        <div class="join-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+        </div>
+
+        <h1>Unirse a un Grupo</h1>
+        <p>Ingresa el código de invitación que te proporcionó el líder del grupo</p>
+
+        <form method="post" class="join-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">{{ form.invite_code.label }}</label>
+                {{ form.invite_code }}
+                {% if form.invite_code.errors %}
+                <span class="form-error">{{ form.invite_code.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.message.label }}</label>
+                {{ form.message }}
+                <small class="form-help">Este mensaje será visible para el líder si el grupo requiere aprobación</small>
+                {% if form.message.errors %}
+                <span class="form-error">{{ form.message.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Unirse</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de advertencia multigrupo -->
+{% if user_groups_count >= 1 %}
+<div id="multigroupWarningModal" class="modal" style="display: none;">
+    <div class="modal-overlay"></div>
+    <div class="modal-content" style="max-width: 600px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width: 40px; height: 40px;">
+                    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--azul-principal); margin-bottom: 10px;">Función Experimental</h2>
+            <p style="color: #666; font-size: 1.1rem; line-height: 1.6; margin-bottom: 20px;">
+                <strong>Los multigrupos están en fase de prueba.</strong><br>
+                Recomendamos estar en un solo grupo para una experiencia óptima. Puedes probar esta función, pero ten en cuenta que puede presentar errores o comportamientos inesperados.
+            </p>
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px;">
+                <p style="margin: 0; font-size: 0.95rem; display: flex; align-items: flex-start; gap: 8px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;">
+                        <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <span style="color: #dc2626;"><strong>Advertencia:</strong> Esta funcionalidad está sujeta a cambios y puede contener errores. Úsala bajo tu propio riesgo.</span>
+                </p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <button type="button" class="btn btn-secondary" onclick="closeWarningModal()">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="confirmJoinGroup()">Entiendo, Continuar</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    #multigroupWarningModal.modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #multigroupWarningModal .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    #multigroupWarningModal .modal-content {
+        position: relative;
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        z-index: 1;
+    }
+
+    /* Modo oscuro */
+    [data-theme="dark"] #multigroupWarningModal .modal-content {
+        background: #1a1f2e;
+        color: #e8eaed;
+    }
+
+    [data-theme="dark"] #multigroupWarningModal h2 {
+        color: rgb(135, 169, 224) !important;
+    }
+
+    [data-theme="dark"] #multigroupWarningModal p {
+        color: #b8bcc4 !important;
+    }
+</style>
+
+<script>
+    const userGroupsCount = {{ user_groups_count|default:0 }};
+    const form = document.querySelector('.join-form');
+    const modal = document.getElementById('multigroupWarningModal');
+    let warningShown = false;
+
+    if (userGroupsCount >= 1) {
+        form.addEventListener('submit', function(e) {
+            if (!warningShown) {
+                e.preventDefault();
+                modal.style.display = 'flex';
+            }
+        });
+    }
+
+    function closeWarningModal() {
+        modal.style.display = 'none';
+    }
+
+    function confirmJoinGroup() {
+        warningShown = true;
+        modal.style.display = 'none';
+        form.submit();
+    }
+</script>
+{% endif %}
+{% endblock %}

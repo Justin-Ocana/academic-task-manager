@@ -1,0 +1,92 @@
+/* Skeleton Loaders para mejorar UX durante carga */
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Skeleton para tarjetas de tareas */
+.skeleton-task-card {
+    height: 120px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+}
+
+/* Skeleton para lista de miembros */
+.skeleton-member {
+    height: 60px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+/* Skeleton para calendario */
+.skeleton-calendar-day {
+    height: 80px;
+    border-radius: 8px;
+}
+
+/* Skeleton para texto */
+.skeleton-text {
+    height: 16px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+.skeleton-text.large {
+    height: 24px;
+}
+
+.skeleton-text.small {
+    height: 12px;
+}
+
+/* Skeleton para avatar */
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* Contenedor de skeleton */
+.skeleton-container {
+    padding: 20px;
+}
+
+/* Ocultar contenido real mientras carga */
+.loading .content {
+    display: none;
+}
+
+.loading .skeleton-container {
+    display: block;
+}
+
+.skeleton-container {
+    display: none;
+}
+
+/* Skeleton para grupos */
+.skeleton-group-card {
+    height: 200px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+}
+
+/* Skeleton para notificaciones */
+.skeleton-notification {
+    height: 80px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+}

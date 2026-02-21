@@ -1,0 +1,286 @@
+{% extends 'Index/base.html' %}
+{% load static %}
+
+{% block title %}Términos y Condiciones - Agenda Virtual Eiwa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .terms-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .terms-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 3px solid var(--azul-pastel);
+    }
+
+    .terms-header h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 3rem;
+        color: var(--azul-principal);
+        margin: 0 0 15px 0;
+    }
+
+    .terms-header .subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        font-weight: 600;
+    }
+
+    .terms-section {
+        margin-bottom: 35px;
+    }
+
+    .terms-section h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.8rem;
+        color: var(--azul-principal);
+        margin: 0 0 15px 0;
+    }
+
+    .terms-section p {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 15px;
+    }
+
+    .terms-section ul {
+        margin: 15px 0;
+        padding-left: 25px;
+    }
+
+    .terms-section li {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 10px;
+    }
+
+    .highlight-box {
+        background: #f0f7ff;
+        border-left: 4px solid var(--azul-pastel);
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 8px;
+    }
+
+    .highlight-box strong {
+        color: var(--azul-principal);
+    }
+
+    .contact-info {
+        background: var(--gris-suave);
+        padding: 25px;
+        border-radius: 15px;
+        margin-top: 40px;
+        text-align: center;
+    }
+
+    .contact-info h3 {
+        font-family: 'Bebas Neue', sans-serif;
+        color: var(--azul-principal);
+        margin: 0 0 10px 0;
+    }
+
+    @media (max-width: 768px) {
+        .terms-container {
+            padding: 25px;
+            margin: 20px;
+        }
+
+        .terms-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="terms-container">
+    <div class="terms-header">
+        <h1>Términos y Condiciones de Uso</h1>
+        <p class="subtitle">Agenda Virtual Eiwa - Plataforma de Gestión Académica Colaborativa</p>
+    </div>
+
+    <div class="highlight-box">
+        <p><strong>Última actualización:</strong> Noviembre 2025</p>
+        <p>Bienvenido a Agenda Virtual Eiwa. Al acceder o utilizar esta plataforma, aceptas cumplir con los presentes
+            Términos y Condiciones de Uso. Si no estás de acuerdo con alguno de estos términos, te recomendamos no
+            utilizar la plataforma.</p>
+        <p style="margin-top: 10px;"><strong>Importante:</strong> Agenda Virtual Eiwa es un proyecto académico
+            desarrollado por un estudiante de la institución EIWA y no representa una plataforma oficial del colegio.
+        </p>
+    </div>
+
+    <div class="terms-section">
+        <h2>1. Naturaleza del Proyecto</h2>
+        <p>Agenda Virtual Eiwa es una plataforma web creada con fines educativos, demostrativos y de aprendizaje
+            colaborativo. Fue desarrollada por Justin Ocaña como proyecto estudiantil y presentada en la Feria de
+            Informática de EIWA.</p>
+        <p><strong>No es un servicio comercial ni una plataforma institucional oficial.</strong></p>
+    </div>
+
+    <div class="terms-section">
+        <h2>2. Uso Permitido</h2>
+        <p>Puedes utilizar Agenda Virtual Eiwa únicamente para:</p>
+        <ul>
+            <li>Organizar tareas y actividades educativas</li>
+            <li>Colaborar con grupos de estudio</li>
+            <li>Crear y gestionar materias, tareas y progresos</li>
+            <li>Aprender sobre gestión académica y trabajo colaborativo</li>
+        </ul>
+        <p><strong>El uso de la plataforma es gratuito y está limitado a fines académicos.</strong></p>
+    </div>
+
+    <div class="terms-section">
+        <h2>3. Registro de Usuario</h2>
+        <p>Para acceder a ciertas funciones debes crear una cuenta. Al registrarte, aceptas:</p>
+        <ul>
+            <li>Proporcionar información real y precisa</li>
+            <li>No suplantar la identidad de otras personas</li>
+            <li>Mantener la confidencialidad de tu contraseña</li>
+            <li>Ser responsable de cualquier actividad realizada desde tu cuenta</li>
+        </ul>
+        <p>Si encontramos uso inapropiado, podremos suspender o eliminar tu cuenta.</p>
+    </div>
+
+    <div class="terms-section">
+        <h2>4. Contenido Generado por el Usuario</h2>
+        <p>Eres responsable del contenido que generas dentro de la plataforma, incluyendo:</p>
+        <ul>
+            <li>Nombres de grupos</li>
+            <li>Materias</li>
+            <li>Tareas</li>
+            <li>Comentarios o descripciones</li>
+        </ul>
+        <p><strong>No está permitido subir contenido:</strong></p>
+        <ul>
+            <li>Ofensivo, inapropiado o discriminatorio</li>
+            <li>Que viole derechos de autor</li>
+            <li>Que cause daño a otros usuarios</li>
+        </ul>
+    </div>
+
+    <div class="terms-section">
+        <h2>5. Privacidad y Protección de Datos</h2>
+        <p>Nos comprometemos a proteger tu información personal. Nuestro manejo de datos está descrito en la <a
+                href="{% url 'privacy_policy' %}"
+                style="color: var(--azul-principal); text-decoration: underline;">Política de Privacidad</a> de Agenda
+            Virtual Eiwa.</p>
+        <p>Al usar la plataforma, aceptas las prácticas descritas en dicha política.</p>
+    </div>
+
+    <div class="terms-section">
+        <h2>6. Propiedad Intelectual</h2>
+        <ul>
+            <li>El nombre, logo y colores institucionales de EIWA son propiedad exclusiva de la institución educativa
+                EIWA.</li>
+            <li>Su uso en esta plataforma es únicamente con fines educativos y de identificación académica.</li>
+            <li>La programación, diseño y funcionalidades de Agenda Virtual Eiwa fueron desarrollados por Justin Ocaña.
+            </li>
+            <li>No se permite copiar, distribuir o reutilizar el software o diseño sin autorización del desarrollador.
+            </li>
+        </ul>
+    </div>
+
+    <div class="terms-section">
+        <h2>7. Limitación de Responsabilidad</h2>
+        <p>Agenda Virtual Eiwa es un proyecto educativo ofrecido "tal cual".</p>
+        <p><strong>No garantizamos:</strong></p>
+        <ul>
+            <li>Disponibilidad continua del servicio</li>
+            <li>Ausencia de errores</li>
+            <li>Conservación permanente de los datos</li>
+            <li>Funcionamiento en todos los dispositivos</li>
+        </ul>
+        <p><strong>No somos responsables por:</strong></p>
+        <ul>
+            <li>Pérdida de información</li>
+            <li>Fallos técnicos</li>
+            <li>Mal uso por parte de los usuarios</li>
+            <li>Daños indirectos causados por el uso de la plataforma</li>
+        </ul>
+        <p><strong>El uso de la plataforma es bajo tu propio riesgo.</strong></p>
+    </div>
+
+    <div class="terms-section">
+        <h2>8. Conducta del Usuario</h2>
+        <p>El usuario acepta no utilizar la plataforma para:</p>
+        <ul>
+            <li>Realizar actividades ilícitas</li>
+            <li>Intentar vulnerar la seguridad del sistema</li>
+            <li>Modificar o manipular información de otros usuarios</li>
+            <li>Suplantar a personal del colegio</li>
+            <li>Distribuir software dañino o scripts maliciosos</li>
+        </ul>
+        <p>Cualquier violación puede resultar en expulsión permanente de la plataforma.</p>
+    </div>
+
+    <div class="terms-section">
+        <h2>9. Suspensión o Terminación del Servicio</h2>
+        <p>Podemos suspender o eliminar cuentas si:</p>
+        <ul>
+            <li>Violaste estos Términos</li>
+            <li>Hiciste mal uso de las funciones</li>
+            <li>Afectaste la experiencia de otros usuarios</li>
+            <li>Ingresaste contenido inapropiado</li>
+        </ul>
+        <p>También podremos suspender el servicio temporalmente por mantenimiento o fallos técnicos.</p>
+    </div>
+
+    <div class="terms-section">
+        <h2>10. Modificaciones a la Plataforma</h2>
+        <p>Podemos modificar:</p>
+        <ul>
+            <li>Funciones</li>
+            <li>Diseño</li>
+            <li>Reglas de uso</li>
+            <li>Mecánicas del sistema</li>
+        </ul>
+        <p>Estas actualizaciones pueden hacerse en cualquier momento. Intentaremos avisar sobre cambios importantes
+            mediante la plataforma.</p>
+    </div>
+
+    <div class="terms-section">
+        <h2>11. Uso por Menores de Edad</h2>
+        <p>La plataforma puede ser utilizada por estudiantes menores de 18 años. Recomendamos que cuenten con
+            conocimiento de padres o tutores.</p>
+    </div>
+
+    <div class="terms-section">
+        <h2>12. Enlaces Externos</h2>
+        <p>Agenda Virtual Eiwa no incluye publicidad ni enlaces a servicios externos. Si se añadieran en el futuro, no
+            nos hacemos responsables de su contenido o políticas.</p>
+    </div>
+
+    <div class="terms-section">
+        <h2>13. Cambios a estos Términos</h2>
+        <p>Podemos actualizar estos Términos y Condiciones en cualquier momento para reflejar mejoras, requisitos
+            legales o cambios en el servicio.</p>
+        <p>Se publicará una notificación dentro de la plataforma cuando existan actualizaciones importantes.</p>
+    </div>
+
+    <div class="contact-info">
+        <h3>Contacto</h3>
+        <p>Si tienes preguntas o reclamos sobre estos Términos y Condiciones, puedes contactarnos en:</p>
+        <p><strong>Desarrollador:</strong> Justin Ocaña</p>
+        <p><strong>Institución:</strong> EIWA</p>
+        <p><strong>Email:</strong> justinantonio2009@gmail.com</p>
+    </div>
+
+    <div class="highlight-box" style="margin-top: 40px;">
+        <p style="text-align: center; margin: 0;"><strong>Aviso Final</strong></p>
+        <p style="text-align: center; margin: 10px 0 0 0;">Agenda Virtual Eiwa es un proyecto académico independiente,
+            creado con fines educativos. El nombre y logo "EIWA" pertenecen a la institución educativa EIWA. Todos los
+            demás elementos del software son propiedad de su desarrollador.</p>
+        <p style="text-align: center; margin: 15px 0 0 0; font-weight: 600;">© 2026 — Agenda Virtual Eiwa. Proyecto
+            estudiantil desarrollado por Justin Ocaña.</p>
+    </div>
+</div>
+{% endblock %}
